@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/search_page.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -108,7 +109,18 @@ class _Header extends StatelessWidget {
 class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SearchPage(),
+          ),
+        );
+
+      },
+      child: Container(
       height: 48,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -143,7 +155,9 @@ class _SearchBar extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
+    
   }
 }
 

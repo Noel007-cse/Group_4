@@ -22,7 +22,7 @@ class SpaceBookApp extends StatelessWidget {
         fontFamily: 'Poppins',
         primaryColor: const Color(0xFF3D7F1E),
       ),
-      home: TurfListingPage(),
+      home: HomePage(),
     );
   }
 }
