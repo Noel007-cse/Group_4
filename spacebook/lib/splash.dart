@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashframeWidget extends StatelessWidget {
           @override
@@ -92,12 +92,12 @@ Container(
         mainAxisSize: MainAxisSize.min,
         
         children: <Widget>[SvgPicture.asset(
-        'assets/images/icon.svg',
+        'assets/icon.svg',
         semanticsLabel: 'icon'
-      );,
+      ),
 ],
       ),
-    ),S
+    ),
 
         ],
       ),
