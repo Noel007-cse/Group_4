@@ -14,12 +14,68 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        scaffoldBackgroundColor: const Color(0xFFF2F4F3),
       ),
       home: const MyBookingsPage(),
     );
   }
 }
+
+// ─── Data Model ────────────────────────────────────────────────────────────────
+
+class BookingModel {
+  final String title;
+  final String date;
+  final String price;
+  final String imageUrl;
+  final String status; // 'COMPLETED' or 'CONFIRMED'
+
+  const BookingModel({
+    required this.title,
+    required this.date,
+    required this.price,
+    required this.imageUrl,
+    required this.status,
+  });
+}
+
+// ─── Sample Data ───────────────────────────────────────────────────────────────
+
+const List<BookingModel> upcomingBookings = [
+  BookingModel(
+    title: 'Premier Arena Soccer Turf',
+    date: 'Sun, 24 Oct | 06:00 PM - 07:00 PM',
+    price: '₹1,200',
+    imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
+    status: 'CONFIRMED',
+  ),
+  BookingModel(
+    title: 'Skyline Study Lounge',
+    date: 'Tue, 26 Oct | 10:00 AM - 02:00 PM',
+    price: '₹450',
+    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
+    status: 'CONFIRMED',
+  ),
+];
+
+const List<BookingModel> completedBookings = [
+  BookingModel(
+    title: 'Premier Arena Soccer Turf',
+    date: 'Sat, 16 Oct | 05:00 PM - 06:00 PM',
+    price: '₹1,200',
+    imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
+    status: 'COMPLETED',
+  ),
+  BookingModel(
+    title: 'Focus Hub Study Library',
+    date: 'Wed, 13 Oct | 09:00 AM - 12:00 PM',
+    price: '₹150',
+    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
+    status: 'COMPLETED',
+  ),
+];
+
+// ─── Main Page ─────────────────────────────────────────────────────────────────
 
 class MyBookingsPage extends StatefulWidget {
   const MyBookingsPage({super.key});
@@ -35,7 +91,8 @@ class _MyBookingsPageState extends State<MyBookingsPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
+    // Start on Upcoming (index 0). Change to 1 to default to Completed.
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -47,76 +104,84 @@ class _MyBookingsPageState extends State<MyBookingsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF2F4F3),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.maybePop(context),
         ),
         title: const Text(
           'My Bookings',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
         centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: const Color(0xFF2E7D32),
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: const Color(0xFF2E7D32),
-          indicatorWeight: 2.5,
-          labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-          tabs: const [
-            Tab(text: 'Upcoming'),
-            Tab(text: 'Completed'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(46),
+          child: Container(
+            color: Colors.white,
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.black87,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: const Color(0xFF2E7D32),
+              indicatorWeight: 2.5,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
+              ),
+              tabs: const [
+                Tab(text: 'Upcoming'),
+                Tab(text: 'Completed'),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          const Center(child: Text('No upcoming bookings')),
-          _CompletedBookingsTab(),
+        children: const [
+          _BookingsList(bookings: upcomingBookings, isUpcoming: true),
+          _BookingsList(bookings: completedBookings, isUpcoming: false),
         ],
       ),
-      bottomNavigationBar: _BottomNavBar(),
+      bottomNavigationBar: const _BottomNavBar(activeIndex: 1),
     );
   }
 }
 
-class _CompletedBookingsTab extends StatelessWidget {
-  final List<Map<String, dynamic>> bookings = const [
-    {
-      'title': 'Premier Arena Soccer Turf',
-      'date': 'Sat, 16 Oct | 05:00 PM - 06:00 PM',
-      'price': '₹1,200',
-      'image': 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
-      'status': 'COMPLETED',
-    },
-    {
-      'title': 'Focus Hub Study Library',
-      'date': 'Wed, 13 Oct | 09:00 AM - 12:00 PM',
-      'price': '₹150',
-      'image': 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
-      'status': 'COMPLETED',
-    },
-  ];
+// ─── Bookings List ─────────────────────────────────────────────────────────────
+
+class _BookingsList extends StatelessWidget {
+  final List<BookingModel> bookings;
+  final bool isUpcoming;
+
+  const _BookingsList({
+    required this.bookings,
+    required this.isUpcoming,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...bookings.map((booking) => _BookingCard(booking: booking)),
-          const SizedBox(height: 8),
-          _NearbyTipCard(),
+          ...bookings.map(
+            (b) => _BookingCard(booking: b, isUpcoming: isUpcoming),
+          ),
+          const SizedBox(height: 4),
+          const _NearbyTipCard(),
           const SizedBox(height: 16),
         ],
       ),
@@ -124,10 +189,13 @@ class _CompletedBookingsTab extends StatelessWidget {
   }
 }
 
-class _BookingCard extends StatelessWidget {
-  final Map<String, dynamic> booking;
+// ─── Booking Card ──────────────────────────────────────────────────────────────
 
-  const _BookingCard({required this.booking});
+class _BookingCard extends StatelessWidget {
+  final BookingModel booking;
+  final bool isUpcoming;
+
+  const _BookingCard({required this.booking, required this.isUpcoming});
 
   @override
   Widget build(BuildContext context) {
@@ -135,10 +203,10 @@ class _BookingCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withOpacity(0.07),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -147,36 +215,37 @@ class _BookingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image with COMPLETED badge
+          // ── Image + badge ──
           Stack(
             children: [
               ClipRRect(
                 borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
+                    const BorderRadius.vertical(top: Radius.circular(14)),
                 child: Image.network(
-                  booking['image'],
-                  height: 160,
+                  booking.imageUrl,
+                  height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 160,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                  errorBuilder: (_, __, ___) => Container(
+                    height: 170,
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.image,
+                        size: 50, color: Colors.grey),
                   ),
                 ),
               ),
               Positioned(
-                top: 10,
-                right: 10,
+                top: 12,
+                right: 12,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2E7D32),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    booking['status'],
+                    booking.status,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
@@ -189,14 +258,14 @@ class _BookingCard extends StatelessWidget {
             ],
           ),
 
-          // Details
+          // ── Info ──
           Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  booking['title'],
+                  booking.title,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -207,47 +276,32 @@ class _BookingCard extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(Icons.calendar_today_outlined,
-                        size: 14, color: Colors.grey),
+                        size: 13, color: Colors.grey),
                     const SizedBox(width: 5),
                     Text(
-                      booking['date'],
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
+                      booking.date,
+                      style:
+                          const TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
+
+                // ── Price + action ──
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      booking['price'],
+                      booking.price,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF2E7D32),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D32),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 10),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Rebook',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 14),
-                      ),
-                    ),
+                    isUpcoming
+                        ? const _UpcomingActions()
+                        : const _RebookButton(),
                   ],
                 ),
               ],
@@ -259,7 +313,82 @@ class _BookingCard extends StatelessWidget {
   }
 }
 
+// ─── Upcoming Actions ─────────────────────────────────────────────────────────
+
+class _UpcomingActions extends StatelessWidget {
+  const _UpcomingActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Direction icon
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8F5E9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(Icons.navigation_outlined,
+              color: Color(0xFF2E7D32), size: 20),
+        ),
+        const SizedBox(width: 10),
+        // View Details button
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2E7D32),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          ),
+          child: const Text(
+            'View Details',
+            style:
+                TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Rebook Button ─────────────────────────────────────────────────────────────
+
+class _RebookButton extends StatelessWidget {
+  const _RebookButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      ),
+      child: const Text(
+        'Rebook',
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+      ),
+    );
+  }
+}
+
+// ─── Nearby Tip Card ───────────────────────────────────────────────────────────
+
 class _NearbyTipCard extends StatelessWidget {
+  const _NearbyTipCard();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -292,7 +421,9 @@ class _NearbyTipCard extends StatelessWidget {
                 child: RichText(
                   text: const TextSpan(
                     style: TextStyle(
-                        fontSize: 13, color: Colors.black87, height: 1.4),
+                        fontSize: 13,
+                        color: Colors.black87,
+                        height: 1.4),
                     children: [
                       TextSpan(text: 'Arrive 10 minutes early at '),
                       TextSpan(
@@ -317,9 +448,22 @@ class _NearbyTipCard extends StatelessWidget {
   }
 }
 
+// ─── Bottom Nav Bar ────────────────────────────────────────────────────────────
+
 class _BottomNavBar extends StatelessWidget {
+  final int activeIndex;
+
+  const _BottomNavBar({required this.activeIndex});
+
   @override
   Widget build(BuildContext context) {
+    const items = [
+      _NavItemData(icon: Icons.home_outlined, label: 'Home'),
+      _NavItemData(icon: Icons.calendar_today_outlined, label: 'Bookings'),
+      _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
+      _NavItemData(icon: Icons.person_outline, label: 'Profile'),
+    ];
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -336,24 +480,26 @@ class _BottomNavBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(icon: Icons.home_outlined, label: 'Home', active: false),
-              _NavItem(
-                  icon: Icons.calendar_today_outlined,
-                  label: 'Bookings',
-                  active: true),
-              _NavItem(
-                  icon: Icons.grid_view_outlined,
-                  label: 'My Spaces',
-                  active: false),
-              _NavItem(
-                  icon: Icons.person_outline, label: 'Profile', active: false),
-            ],
+            children: List.generate(
+              items.length,
+              (i) => _NavItem(
+                icon: items[i].icon,
+                label: items[i].label,
+                active: i == activeIndex,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+class _NavItemData {
+  final IconData icon;
+  final String label;
+
+  const _NavItemData({required this.icon, required this.label});
 }
 
 class _NavItem extends StatelessWidget {
@@ -380,7 +526,7 @@ class _NavItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             color: color,
-            fontWeight: active ? FontWeight.w600 : FontWeight.normal,
+            fontWeight: active ? FontWeight.w700 : FontWeight.normal,
           ),
         ),
       ],
