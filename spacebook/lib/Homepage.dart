@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 
 // void main() {
@@ -634,12 +635,16 @@ class _BottomNavBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children:[
               _NavItem(icon: Icons.home_rounded, label: 'Home', active: true),
               _NavItem(
                   icon: Icons.calendar_today_outlined,
                   label: 'Bookings',
-                  active: false),
+                  active: false,
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyBookingsPage(),),);
+                  },
+                  ),
               _NavItem(
                   icon: Icons.grid_view_outlined,
                   label: 'My Spaces',
@@ -658,18 +663,22 @@ class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool active;
+  final VoidCallback? onTap; //changed here
 
   const _NavItem({
     required this.icon,
     required this.label,
     required this.active,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final color =
         active ? const Color(0xFF2E7D32) : Colors.grey;
-    return Column(
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color, size: 24),
@@ -683,6 +692,7 @@ class _NavItem extends StatelessWidget {
           ),
         ),
       ],
+    ),
     );
   }
 }

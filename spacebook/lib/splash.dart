@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashframeWidget extends StatelessWidget {
+  const SplashframeWidget({super.key});
+
           @override
           Widget build(BuildContext context) {
           // Figma Flutter Generator SplashframeWidget - FRAME - VERTICAL
