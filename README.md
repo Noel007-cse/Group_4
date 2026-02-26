@@ -1,2 +1,2 @@
-# kunji_project
-THIS IS A KUNJI PROJECT
+mini project
+group_4
