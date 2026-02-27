@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/models/booking_frame_model.dart';
 import 'package:spacebook/widgets/booking_tip_widget.dart';
 
 // ─── Data Model ────────────────────────────────────────────────────────────────
 
-class BookingModel {
-  final String title;
-  final String date;
-  final String price;
-  final String imageUrl;
-  final String status; // 'COMPLETED' or 'CONFIRMED'
 
-  const BookingModel({
-    required this.title,
-    required this.date,
-    required this.price,
-    required this.imageUrl,
-    required this.status,
-  });
-}
 
 // ─── Sample Data ───────────────────────────────────────────────────────────────
 
 const List<BookingModel> upcomingBookings = [
   BookingModel(
+    id: '1',
     title: 'Premier Arena Soccer Turf',
     date: 'Sun, 24 Oct | 06:00 PM - 07:00 PM',
     price: '₹1,200',
@@ -30,6 +18,7 @@ const List<BookingModel> upcomingBookings = [
     status: 'CONFIRMED',
   ),
   BookingModel(
+    id: '2',
     title: 'Skyline Study Lounge',
     date: 'Tue, 26 Oct | 10:00 AM - 02:00 PM',
     price: '₹450',
@@ -40,6 +29,7 @@ const List<BookingModel> upcomingBookings = [
 
 const List<BookingModel> completedBookings = [
   BookingModel(
+    id: '1',
     title: 'Premier Arena Soccer Turf',
     date: 'Sat, 16 Oct | 05:00 PM - 06:00 PM',
     price: '₹1,200',
@@ -47,6 +37,7 @@ const List<BookingModel> completedBookings = [
     status: 'COMPLETED',
   ),
   BookingModel(
+    id: '2',
     title: 'Focus Hub Study Library',
     date: 'Wed, 13 Oct | 09:00 AM - 12:00 PM',
     price: '₹150',

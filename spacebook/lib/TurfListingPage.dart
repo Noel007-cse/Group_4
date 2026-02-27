@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
-
-class TurfModel {
-  final String title;
-  final String distance; // e.g. "0.5"
-  final double distanceKm;
-  final int pricePerHr;
-  final double rating;
-  final String imageUrl;
-
-  const TurfModel({
-    required this.title,
-    required this.distance,
-    required this.distanceKm,
-    required this.pricePerHr,
-    required this.rating,
-    required this.imageUrl,
-  });
-}
+import 'package:spacebook/models/search_result_model.dart';
 
 // ─── Sample Data ───────────────────────────────────────────────────────────────
 
-const List<TurfModel> _allTurfs = [
-  TurfModel(
+const List<SearchResultModel> _allTurfs = [
+  SearchResultModel(
+    id: 1,
     title: 'Olympic Green Arena',
     distance: '0.5',
     distanceKm: 0.5,
@@ -30,7 +14,8 @@ const List<TurfModel> _allTurfs = [
     imageUrl:
         'https://images.unsplash.com/photo-1551958219-acbc630e2914?w=600',
   ),
-  TurfModel(
+  SearchResultModel(
+    id: 2,
     title: 'Stellar Multi-Sports Park',
     distance: '1.2',
     distanceKm: 1.2,
@@ -39,7 +24,8 @@ const List<TurfModel> _allTurfs = [
     imageUrl:
         'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
   ),
-  TurfModel(
+  SearchResultModel(
+    id: 3,
     title: "Champion's Court Indoor",
     distance: '2.4',
     distanceKm: 2.4,
@@ -48,7 +34,8 @@ const List<TurfModel> _allTurfs = [
     imageUrl:
         'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600',
   ),
-  TurfModel(
+  SearchResultModel(
+    id: 4,
     title: 'Green Kick Football Arena',
     distance: '3.1',
     distanceKm: 3.1,
@@ -57,7 +44,8 @@ const List<TurfModel> _allTurfs = [
     imageUrl:
         'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600',
   ),
-  TurfModel(
+  SearchResultModel(
+    id: 5,
     title: 'Elite Sports Ground',
     distance: '4.0',
     distanceKm: 4.0,
@@ -81,12 +69,12 @@ class TurfListingPage extends StatefulWidget {
 
 class _TurfListingPageState extends State<TurfListingPage> {
   SortType _sortType = SortType.nearest;
-  List<TurfModel> _turfs = List.from(_allTurfs);
+  List<SearchResultModel> _turfs = List.from(_allTurfs);
 
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
-      final sorted = List<TurfModel>.from(_allTurfs);
+      final sorted = List<SearchResultModel>.from(_allTurfs);
       switch (type) {
         case SortType.nearest:
           sorted.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
@@ -386,7 +374,7 @@ class _FilterChip extends StatelessWidget {
 // ─── Turf Card ─────────────────────────────────────────────────────────────────
 
 class _TurfCard extends StatefulWidget {
-  final TurfModel turf;
+  final SearchResultModel turf;
 
   const _TurfCard({required this.turf});
 

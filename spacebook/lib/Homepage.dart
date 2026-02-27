@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/main.dart';
+import 'package:spacebook/models/category_item_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
+import 'data/category_item_data.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -160,32 +162,6 @@ class _SearchBar extends StatelessWidget {
 // ─── Categories ────────────────────────────────────────────────────────────────
 
 class _CategoriesSection extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = const [
-    {
-      'label': 'Sports Turfs',
-      'icon': Icons.sports_soccer,
-      'color': Color(0xFFE8F5E9),
-      'iconColor': Color(0xFF2E7D32),
-    },
-    {
-      'label': 'Study Halls',
-      'icon': Icons.menu_book_outlined,
-      'color': Color(0xFFE3F2FD),
-      'iconColor': Color(0xFF1565C0),
-    },
-    {
-      'label': 'Libraries',
-      'icon': Icons.local_library_outlined,
-      'color': Color(0xFFFFF3E0),
-      'iconColor': Color(0xFFE65100),
-    },
-    {
-      'label': 'Halls and Events',
-      'icon': Icons.celebration_outlined,
-      'color': Color(0xFFF3E5F5),
-      'iconColor': Color(0xFF6A1B9A),
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -214,12 +190,7 @@ class _CategoriesSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: categories
-              .map((cat) => _CategoryItem(
-                    label: cat['label'],
-                    icon: cat['icon'],
-                    bgColor: cat['color'],
-                    iconColor: cat['iconColor'],
-                  ))
+              .map((category) => _CategoryItem(category: category))
               .toList(),
         ),
       ],
@@ -228,17 +199,9 @@ class _CategoriesSection extends StatelessWidget {
 }
 
 class _CategoryItem extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color bgColor;
-  final Color iconColor;
+  final CategoryItemModel category;
 
-  const _CategoryItem({
-    required this.label,
-    required this.icon,
-    required this.bgColor,
-    required this.iconColor,
-  });
+  const _CategoryItem({required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -250,14 +213,14 @@ class _CategoryItem extends StatelessWidget {
             width: 58,
             height: 58,
             decoration: BoxDecoration(
-              color: bgColor,
+              color: category.bgColor,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: iconColor, size: 28),
+            child: Icon(category.icon, color: category.iconColor, size: 28),
           ),
           const SizedBox(height: 7),
           Text(
-            label,
+            category.label,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 11.5, color: Colors.black87),
           ),
