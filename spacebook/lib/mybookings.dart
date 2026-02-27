@@ -1,26 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My Bookings',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF2F4F3),
-      ),
-      home: const MyBookingsPage(),
-    );
-  }
-}
-
 // ─── Data Model ────────────────────────────────────────────────────────────────
 
 class BookingModel {
@@ -154,7 +133,6 @@ class _MyBookingsPageState extends State<MyBookingsPage>
           _BookingsList(bookings: completedBookings, isUpcoming: false),
         ],
       ),
-      bottomNavigationBar: const _BottomNavBar(activeIndex: 1),
     );
   }
 }
@@ -441,92 +419,6 @@ class _NearbyTipCard extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ─── Bottom Nav Bar ────────────────────────────────────────────────────────────
-
-class _BottomNavBar extends StatelessWidget {
-  final int activeIndex;
-
-  const _BottomNavBar({required this.activeIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      _NavItemData(icon: Icons.home_outlined, label: 'Home'),
-      _NavItemData(icon: Icons.calendar_today_outlined, label: 'Bookings'),
-      _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
-      _NavItemData(icon: Icons.person_outline, label: 'Profile'),
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              items.length,
-              (i) => _NavItem(
-                icon: items[i].icon,
-                label: items[i].label,
-                active: i == activeIndex,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItemData {
-  final IconData icon;
-  final String label;
-
-  const _NavItemData({required this.icon, required this.label});
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.active,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = active ? const Color(0xFF2E7D32) : Colors.grey;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: active ? FontWeight.w700 : FontWeight.normal,
           ),
         ),
       ],

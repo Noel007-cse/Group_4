@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spacebook/Homepage.dart';
 import 'package:spacebook/TurfListingPage.dart';
 import 'package:spacebook/auth_screen.dart';
+import 'package:spacebook/main_screen.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/spacepage1.dart';
 import 'package:spacebook/spacepage2.dart';
@@ -40,27 +41,27 @@ class _SpaceBookAppState extends State<SpaceBookApp> {
       themeMode: _themeMode,
 
       theme: ThemeData(
-  brightness: Brightness.light,
-  fontFamily: 'Poppins',
-  scaffoldBackgroundColor: Colors.white,
-  cardColor: Colors.white,
-  colorScheme: const ColorScheme.light(
-    primary: Colors.green,
-    surface: Colors.white,
-  ),
-),
+        brightness: Brightness.light,
+        fontFamily: 'Poppins',
+        scaffoldBackgroundColor: Colors.white,
+        cardColor: Colors.white,
+        colorScheme: const ColorScheme.light(
+          primary: Colors.green,
+          surface: Colors.white,
+        ),
+      ),
 
-darkTheme: ThemeData(
-  brightness: Brightness.dark,
-  fontFamily: 'Poppins',
-  scaffoldBackgroundColor: const Color(0xFF121212),
-  cardColor: const Color(0xFF1E1E1E),
-  colorScheme: const ColorScheme.dark(
-    primary: Colors.green,
-    surface: Color(0xFF1E1E1E),
-  ),
-),
-      home: const HomePage(),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: 'Poppins',
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        cardColor: const Color(0xFF1E1E1E),
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.green,
+          surface: Color(0xFF1E1E1E),
+        ),
+      ),
+      home: MainScreen(),
     );
   }
 }
