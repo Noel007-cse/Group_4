@@ -61,7 +61,7 @@ class _SpaceBookAppState extends State<SpaceBookApp> {
           surface: Color(0xFF1E1E1E),
         ),
       ),
-      home: MainScreen(),
+      home: SplashScreen(),
     );
   }
 }
