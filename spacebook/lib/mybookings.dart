@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/widgets/booking_tip_widget.dart';
 
 // ─── Data Model ────────────────────────────────────────────────────────────────
 
@@ -159,7 +160,7 @@ class _BookingsList extends StatelessWidget {
             (b) => _BookingCard(booking: b, isUpcoming: isUpcoming),
           ),
           const SizedBox(height: 4),
-          const _NearbyTipCard(),
+          const NearbyTipCard(),
           const SizedBox(height: 16),
         ],
       ),
@@ -362,66 +363,4 @@ class _RebookButton extends StatelessWidget {
   }
 }
 
-// ─── Nearby Tip Card ───────────────────────────────────────────────────────────
 
-class _NearbyTipCard extends StatelessWidget {
-  const _NearbyTipCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'NEARBY BOOKING TIP',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey,
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1F8E9),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFC8E6C9)),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(Icons.info_outline,
-                  color: Color(0xFF2E7D32), size: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.black87,
-                        height: 1.4),
-                    children: [
-                      TextSpan(text: 'Arrive 10 minutes early at '),
-                      TextSpan(
-                        text: 'Premier Arena',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      TextSpan(
-                          text:
-                              ' to complete your check-in process seamlessly.'),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
