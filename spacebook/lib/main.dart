@@ -11,19 +11,56 @@ void main() {
   runApp(const SpaceBookApp());
 }
 
-class SpaceBookApp extends StatelessWidget {
-  const SpaceBookApp({Key? key}) : super(key: key);
+class SpaceBookApp extends StatefulWidget {
+  const SpaceBookApp({super.key});
+
+  // ✅ THIS METHOD WAS MISSING
+  static _SpaceBookAppState? of(BuildContext context) {
+    return context.findAncestorStateOfType<_SpaceBookAppState>();
+  }
+
+  @override
+  State<SpaceBookApp> createState() => _SpaceBookAppState();
+}
+
+class _SpaceBookAppState extends State<SpaceBookApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void toggleTheme() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
+
       theme: ThemeData(
-        fontFamily: 'Poppins',
-        primaryColor: const Color(0xFF3D7F1E),
-      ),
-      home: HomePage(),
+  brightness: Brightness.light,
+  fontFamily: 'Poppins',
+  scaffoldBackgroundColor: Colors.white,
+  cardColor: Colors.white,
+  colorScheme: const ColorScheme.light(
+    primary: Colors.green,
+    surface: Colors.white,
+  ),
+),
+
+darkTheme: ThemeData(
+  brightness: Brightness.dark,
+  fontFamily: 'Poppins',
+  scaffoldBackgroundColor: const Color(0xFF121212),
+  cardColor: const Color(0xFF1E1E1E),
+  colorScheme: const ColorScheme.dark(
+    primary: Colors.green,
+    surface: Color(0xFF1E1E1E),
+  ),
+),
+      home: const HomePage(),
     );
   }
 }
-

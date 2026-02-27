@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/main.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 
@@ -29,7 +30,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F3),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       bottomNavigationBar: _BottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -60,6 +61,8 @@ class HomePage extends StatelessWidget {
 // ─── Header ────────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
+  const _Header({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -67,27 +70,32 @@ class _Header extends StatelessWidget {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               'Welcome back,',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ),
-            SizedBox(height: 2),
+            const SizedBox(height: 2),
             Text(
               'Hello, Sourav',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ],
         ),
+
+        // 🌙 Dark Mode Button
         Container(
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -97,8 +105,17 @@ class _Header extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.dark_mode_outlined,
-              color: Colors.black54, size: 20),
+          child: IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode_outlined,
+              size: 20,
+            ),
+            onPressed: () {
+              SpaceBookApp.of(context)?.toggleTheme();
+            },
+          ),
         ),
       ],
     );
