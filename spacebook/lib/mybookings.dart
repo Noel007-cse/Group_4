@@ -1,50 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/data/booking_completed_data.dart';
+import 'package:spacebook/data/booking_upcoming_data.dart';
 import 'package:spacebook/models/booking_frame_model.dart';
 import 'package:spacebook/widgets/booking_tip_widget.dart';
-
-// ─── Data Model ────────────────────────────────────────────────────────────────
-
-
-
-// ─── Sample Data ───────────────────────────────────────────────────────────────
-
-const List<BookingModel> upcomingBookings = [
-  BookingModel(
-    id: '1',
-    title: 'Premier Arena Soccer Turf',
-    date: 'Sun, 24 Oct | 06:00 PM - 07:00 PM',
-    price: '₹1,200',
-    imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
-    status: 'CONFIRMED',
-  ),
-  BookingModel(
-    id: '2',
-    title: 'Skyline Study Lounge',
-    date: 'Tue, 26 Oct | 10:00 AM - 02:00 PM',
-    price: '₹450',
-    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
-    status: 'CONFIRMED',
-  ),
-];
-
-const List<BookingModel> completedBookings = [
-  BookingModel(
-    id: '1',
-    title: 'Premier Arena Soccer Turf',
-    date: 'Sat, 16 Oct | 05:00 PM - 06:00 PM',
-    price: '₹1,200',
-    imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
-    status: 'COMPLETED',
-  ),
-  BookingModel(
-    id: '2',
-    title: 'Focus Hub Study Library',
-    date: 'Wed, 13 Oct | 09:00 AM - 12:00 PM',
-    price: '₹150',
-    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
-    status: 'COMPLETED',
-  ),
-];
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 

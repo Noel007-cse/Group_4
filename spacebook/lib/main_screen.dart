@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/Homepage.dart';
-import 'package:spacebook/main_profile.dart';
+import 'package:spacebook/profile_pages/profile_page.dart';
 import 'package:spacebook/my_spaces_page.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/widgets/nav_bar_widget.dart';
@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
     HomePage(),
     MyBookingsPage(),
     MySpacesPage(),
-    ProfilePage(),
+    ProfileScreen(),
   ];
 
   void onItemTapped(int index) {

@@ -1,0 +1,49 @@
+import 'package:spacebook/models/search_result_model.dart';
+
+const List<SearchResultModel> allTurfs = [
+  SearchResultModel(
+    id: 1,
+    title: 'Olympic Green Arena',
+    distance: '0.5',
+    distanceKm: 0.5,
+    pricePerHr: 1200,
+    rating: 4.9,
+    imageUrl:'https://images.unsplash.com/photo-1551958219-acbc630e2914?w=600',
+  ),
+  SearchResultModel(
+    id: 2,
+    title: 'Stellar Multi-Sports Park',
+    distance: '1.2',
+    distanceKm: 1.2,
+    pricePerHr: 950,
+    rating: 4.7,
+    imageUrl:'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
+  ),
+  SearchResultModel(
+    id: 3,
+    title: "Champion's Court Indoor",
+    distance: '2.4',
+    distanceKm: 2.4,
+    pricePerHr: 1500,
+    rating: 4.5,
+    imageUrl:'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600',
+  ),
+  SearchResultModel(
+    id: 4,
+    title: 'Green Kick Football Arena',
+    distance: '3.1',
+    distanceKm: 3.1,
+    pricePerHr: 800,
+    rating: 4.3,
+    imageUrl:'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600',
+  ),
+  SearchResultModel(
+    id: 5,
+    title: 'Elite Sports Ground',
+    distance: '4.0',
+    distanceKm: 4.0,
+    pricePerHr: 1100,
+    rating: 4.6,
+    imageUrl:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600',
+  ),
+];

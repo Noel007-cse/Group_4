@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ],
               ),
               child: const Icon(
-                Icons.apartment,
+                Icons.business,
                 size: 60,
                 color: Color(0xFF3F6B00),
               ),
