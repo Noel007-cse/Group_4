@@ -6,6 +6,7 @@ class SearchResultModel {
   final int pricePerHr;
   final double rating;
   final String imageUrl;
+  final bool isFavorite;
 
   const SearchResultModel({
     required this.id,
@@ -15,5 +16,6 @@ class SearchResultModel {
     required this.pricePerHr,
     required this.rating,
     required this.imageUrl,
+    required this.isFavorite,
   });
 }

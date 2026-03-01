@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/data/recommedation_data.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
+import 'package:spacebook/models/search_result_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
+import 'package:spacebook/widgets/spaces_card_widget.dart';
 import 'data/category_item_data.dart';
+
+const Color _green = Color(0xFF3F6B00);
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -181,7 +186,7 @@ class _CategoriesSection extends StatelessWidget {
               'See All',
               style: TextStyle(
                   fontSize: 13,
-                  color: const Color(0xFF2E7D32),
+                  color: _green,
                   fontWeight: FontWeight.w600),
             ),
           ],
@@ -239,7 +244,7 @@ class _HostBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E7D32),
+        color: _green,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Stack(
@@ -280,7 +285,7 @@ class _HostBanner extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF2E7D32),
+                  foregroundColor: _green,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -362,29 +367,8 @@ class _FavoritesSection extends StatelessWidget {
 // ─── Recommended Section ───────────────────────────────────────────────────────
 
 class _RecommendedSection extends StatelessWidget {
-  final List<Map<String, dynamic>> spaces = const [
-    {
-      'title': 'Premier Arena Soccer Turf',
-      'distance': '2.4 km away',
-      'price': '₹1,200',
-      'rating': '4.8',
-      'image': 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
-    },
-    {
-      'title': 'Focus Hub Study Library',
-      'distance': '0.8 km away',
-      'price': '₹150',
-      'rating': '4.9',
-      'image': 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
-    },
-    {
-      'title': 'The Grand Ballroom',
-      'distance': '5.1 km away',
-      'price': '₹8,000',
-      'rating': '4.5',
-      'image': 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600',
-    },
-  ];
+
+  final List<SearchResultModel> spaces = allRecommended; 
 
   @override
   Widget build(BuildContext context) {
@@ -404,171 +388,14 @@ class _RecommendedSection extends StatelessWidget {
               'View map',
               style: TextStyle(
                   fontSize: 13,
-                  color: const Color(0xFF2E7D32),
+                  color: _green,
                   fontWeight: FontWeight.w600),
             ),
           ],
         ),
         const SizedBox(height: 14),
-        ...spaces.map((space) => _SpaceCard(space: space)),
+        ...spaces.map((space) => SpacesCardWidget(space: space)),
       ],
     );
   }
 }
-
-class _SpaceCard extends StatelessWidget {
-  final Map<String, dynamic> space;
-
-  const _SpaceCard({required this.space});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(14)),
-                child: Image.network(
-                  space['image'],
-                  height: 170,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 170,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                  ),
-                ),
-              ),
-              // Favorite button
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.85),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.favorite_border,
-                      color: Colors.black54, size: 18),
-                ),
-              ),
-              // Rating badge
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star,
-                          color: Color(0xFFFFC107), size: 14),
-                      const SizedBox(width: 3),
-                      Text(
-                        space['rating'],
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Details
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        space['title'],
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 13, color: Colors.grey),
-                          const SizedBox(width: 3),
-                          Text(
-                            space['distance'],
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: space['price'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E7D32),
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ' /hr',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-

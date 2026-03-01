@@ -8,7 +8,8 @@ const List<SearchResultModel> allTurfs = [
     distanceKm: 0.5,
     pricePerHr: 1200,
     rating: 4.9,
-    imageUrl:'https://images.unsplash.com/photo-1551958219-acbc630e2914?w=600',
+    imageUrl:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600',
+    isFavorite: false,
   ),
   SearchResultModel(
     id: 2,
@@ -18,6 +19,7 @@ const List<SearchResultModel> allTurfs = [
     pricePerHr: 950,
     rating: 4.7,
     imageUrl:'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
+    isFavorite: false,
   ),
   SearchResultModel(
     id: 3,
@@ -27,6 +29,7 @@ const List<SearchResultModel> allTurfs = [
     pricePerHr: 1500,
     rating: 4.5,
     imageUrl:'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600',
+    isFavorite: false,
   ),
   SearchResultModel(
     id: 4,
@@ -36,6 +39,7 @@ const List<SearchResultModel> allTurfs = [
     pricePerHr: 800,
     rating: 4.3,
     imageUrl:'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600',
+    isFavorite: false,
   ),
   SearchResultModel(
     id: 5,
@@ -45,5 +49,6 @@ const List<SearchResultModel> allTurfs = [
     pricePerHr: 1100,
     rating: 4.6,
     imageUrl:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600',
+    isFavorite: false,
   ),
 ];

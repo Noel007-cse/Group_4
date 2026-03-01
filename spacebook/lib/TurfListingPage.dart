@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/models/search_result_model.dart';
 import 'package:spacebook/data/turf_result_data.dart';
+import 'package:spacebook/widgets/spaces_card_widget.dart';
 
 enum SortType { nearest, priceLow, ratingHigh }
+const Color _green = Color(0xFF3F6B00);
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
@@ -169,7 +171,7 @@ class _TurfListingPageState extends State<TurfListingPage> {
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 itemCount: _turfs.length,
-                itemBuilder: (_, i) => _TurfCard(turf: _turfs[i]),
+                itemBuilder: (_, i) => SpacesCardWidget(space: _turfs[i]),
               ),
             ),
           ],
@@ -287,8 +289,7 @@ class _FilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFFE8F5E9) : Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -326,174 +327,6 @@ class _FilterChip extends StatelessWidget {
 
 // ─── Turf Card ─────────────────────────────────────────────────────────────────
 
-class _TurfCard extends StatefulWidget {
-  final SearchResultModel turf;
-
-  const _TurfCard({required this.turf});
-
-  @override
-  State<_TurfCard> createState() => _TurfCardState();
-}
-
-class _TurfCardState extends State<_TurfCard> {
-  bool _isFav = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final turf = widget.turf;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Image ──
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(
-                  turf.imageUrl,
-                  height: 190,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 190,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.image,
-                        size: 50, color: Colors.grey),
-                  ),
-                ),
-              ),
-
-              // Favorite
-              Positioned(
-                top: 12,
-                left: 12,
-                child: GestureDetector(
-                  onTap: () => setState(() => _isFav = !_isFav),
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.85),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _isFav ? Icons.favorite : Icons.favorite_border,
-                      color: _isFav ? Colors.red : Colors.black54,
-                      size: 18,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Rating badge
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star,
-                          color: Color(0xFFFFC107), size: 14),
-                      const SizedBox(width: 3),
-                      Text(
-                        turf.rating.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // ── Details ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        turf.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 13, color: Colors.grey),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${turf.distance} km away',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '₹${turf.pricePerHr.toString()}',
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E7D32),
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ' /hr',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ─── Sort Bottom Sheet ─────────────────────────────────────────────────────────
 
