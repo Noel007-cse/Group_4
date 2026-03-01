@@ -58,7 +58,7 @@ class SearchPage extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children:[
                   Text(
                     "RECENT SEARCHES",
                     style: TextStyle(
@@ -68,9 +68,18 @@ class SearchPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-                  _RecentItem(title: "Sports Turf"),
-                  _RecentItem(title: "Study Halls"),
-                  _RecentItem(title: "Badminton Court"),
+                  _RecentItem(title: "Sports Turf",
+                  onTap:(){
+                    Navigator.push(context, MaterialPageRoute(builder: (_)=> const TurfListingPage(),),
+                    );
+                  },
+                  ),
+                  _RecentItem(title: "Study Halls",
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_)=> const StudyHallsScreen(),),);
+                  },
+                  ),
+                  _RecentItem(title: "Libraries"),
                 ],
               ),
             )
@@ -83,18 +92,25 @@ class SearchPage extends StatelessWidget {
 
 class _RecentItem extends StatelessWidget {
   final String title;
-  const _RecentItem({required this.title});
+  final VoidCallback? onTap;
+  const _RecentItem({required this.title,
+  this.onTap,
+  super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.history, size: 18, color: Colors.grey),
-          const SizedBox(width: 10),
-          Text(title),
-        ],
+   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,            // ✅ USE IT HERE
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.history, size: 18, color: Colors.grey),
+            const SizedBox(width: 10),
+            Text(title),
+          ],
+        ),
       ),
     );
   }
