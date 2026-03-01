@@ -4,12 +4,123 @@ import 'package:spacebook/data/turf_result_data.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 
 enum SortType { nearest, priceLow, ratingHigh }
+
 const Color _green = Color(0xFF3F6B00);
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
+// ─── Category-specific data maps ──────────────────────────────────────────────
+// Each category has its own list of spaces shown in the listing page
+
+const List<SearchResultModel> _librarySpaces = [
+  SearchResultModel(
+    id: 101,
+    title: 'City Central Library',
+    distance: '0.3',
+    distanceKm: 0.3,
+    pricePerHr: 80,
+    rating: 4.8,
+    imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 102,
+    title: 'Knowledge Oasis Study Hall',
+    distance: '0.9',
+    distanceKm: 0.9,
+    pricePerHr: 120,
+    rating: 4.9,
+    imageUrl: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 103,
+    title: 'The Reading Room',
+    distance: '1.5',
+    distanceKm: 1.5,
+    pricePerHr: 60,
+    rating: 4.6,
+    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&fit=crop',
+    isFavorite: false,
+  ),
+];
+
+const List<SearchResultModel> _studyHallSpaces = [
+  SearchResultModel(
+    id: 201,
+    title: 'Focus Study Hub',
+    distance: '0.8',
+    distanceKm: 0.8,
+    pricePerHr: 150,
+    rating: 4.9,
+    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 202,
+    title: 'Skyline Study Lounge',
+    distance: '1.2',
+    distanceKm: 1.2,
+    pricePerHr: 100,
+    rating: 4.7,
+    imageUrl: 'https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 203,
+    title: 'Quiet Corner Study Space',
+    distance: '2.0',
+    distanceKm: 2.0,
+    pricePerHr: 80,
+    rating: 4.5,
+    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&fit=crop',
+    isFavorite: false,
+  ),
+];
+
+const List<SearchResultModel> _eventHallSpaces = [
+  SearchResultModel(
+    id: 301,
+    title: 'The Grand Ballroom',
+    distance: '5.1',
+    distanceKm: 5.1,
+    pricePerHr: 8000,
+    rating: 4.5,
+    imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 302,
+    title: 'Prestige Event Centre',
+    distance: '3.4',
+    distanceKm: 3.4,
+    pricePerHr: 5000,
+    rating: 4.7,
+    imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&fit=crop',
+    isFavorite: false,
+  ),
+  SearchResultModel(
+    id: 303,
+    title: 'Royal Banquet Hall',
+    distance: '6.2',
+    distanceKm: 6.2,
+    pricePerHr: 10000,
+    rating: 4.8,
+    imageUrl: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&fit=crop',
+    isFavorite: false,
+  ),
+];
+
+// Returns correct data list based on category title
+List<SearchResultModel> _getSpacesForCategory(String categoryTitle) {
+  final lower = categoryTitle.toLowerCase();
+  if (lower.contains('librar')) return _librarySpaces;
+  if (lower.contains('study')) return _studyHallSpaces;
+  if (lower.contains('event') || lower.contains('hall')) return _eventHallSpaces;
+  return allTurfs; // default: Sports Turfs
+}
+
+// ─── TurfListingPage ──────────────────────────────────────────────────────────
 
 class TurfListingPage extends StatefulWidget {
-  // ✅ Added categoryTitle — defaults to 'Sports Turf' so existing code won't break
   final String categoryTitle;
 
   const TurfListingPage({
@@ -22,19 +133,20 @@ class TurfListingPage extends StatefulWidget {
 }
 
 class _TurfListingPageState extends State<TurfListingPage> {
-  late List<SearchResultModel> _turfs;
+  late List<SearchResultModel> _spaces;
   SortType _sortType = SortType.nearest;
 
   @override
   void initState() {
     super.initState();
-    _turfs = List.from(allTurfs);
+    _spaces = List.from(_getSpacesForCategory(widget.categoryTitle));
   }
 
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
-      final sorted = List<SearchResultModel>.from(allTurfs);
+      final sorted = List<SearchResultModel>.from(
+          _getSpacesForCategory(widget.categoryTitle));
       switch (type) {
         case SortType.nearest:
           sorted.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
@@ -46,7 +158,7 @@ class _TurfListingPageState extends State<TurfListingPage> {
           sorted.sort((a, b) => b.rating.compareTo(a.rating));
           break;
       }
-      _turfs = sorted;
+      _spaces = sorted;
     });
   }
 
@@ -114,7 +226,6 @@ class _TurfListingPageState extends State<TurfListingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // ✅ Pass categoryTitle to TopBar so it shows correct label
             _TopBar(title: widget.categoryTitle),
             const SizedBox(height: 12),
 
@@ -170,8 +281,8 @@ class _TurfListingPageState extends State<TurfListingPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                itemCount: _turfs.length,
-                itemBuilder: (_, i) => SpacesCardWidget(space: _turfs[i]),
+                itemCount: _spaces.length,
+                itemBuilder: (_, i) => SpacesCardWidget(space: _spaces[i]),
               ),
             ),
           ],
@@ -182,10 +293,9 @@ class _TurfListingPageState extends State<TurfListingPage> {
   }
 }
 
-// ─── Top Bar ───────────────────────────────────────────────────────────────────
+// ─── Top Bar ──────────────────────────────────────────────────────────────────
 
 class _TopBar extends StatelessWidget {
-  // ✅ Added title parameter
   final String title;
 
   const _TopBar({this.title = 'Sports Turf'});
@@ -196,7 +306,6 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: Row(
         children: [
-          // Back button
           GestureDetector(
             onTap: () => Navigator.maybePop(context),
             child: Container(
@@ -218,8 +327,6 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-
-          // ✅ Search field shows the category title dynamically
           Expanded(
             child: Container(
               height: 42,
@@ -240,19 +347,18 @@ class _TopBar extends StatelessWidget {
                   const Icon(Icons.search, color: Colors.grey, size: 18),
                   const SizedBox(width: 6),
                   Text(
-                    title, // ✅ dynamic — shows "Sports Turfs", "Study Halls", etc.
+                    title,
                     style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
+                      color: Colors.black87,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(width: 10),
-
-          // Dark mode icon
           Container(
             width: 38,
             height: 38,
@@ -276,7 +382,7 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-// ─── Filter Chip ───────────────────────────────────────────────────────────────
+// ─── Filter Chip ──────────────────────────────────────────────────────────────
 
 class _FilterChip extends StatelessWidget {
   final String label;
@@ -294,7 +400,8 @@ class _FilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFFE8F5E9) : Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -325,7 +432,7 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
-// ─── Sort Bottom Sheet ─────────────────────────────────────────────────────────
+// ─── Sort Bottom Sheet ────────────────────────────────────────────────────────
 
 class _SortBottomSheet extends StatelessWidget {
   final SortType current;
@@ -361,13 +468,11 @@ class _SortBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          const Text(
-            'Sort By',
-            style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87),
-          ),
+          const Text('Sort By',
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87)),
           const SizedBox(height: 16),
           ...options.map((opt) {
             final isSelected = current == opt.$1;
@@ -378,7 +483,9 @@ class _SortBottomSheet extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFE8F5E9) : Colors.grey[50],
+                  color: isSelected
+                      ? const Color(0xFFE8F5E9)
+                      : Colors.grey[50],
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected ? _green : Colors.grey.shade200,
@@ -390,16 +497,14 @@ class _SortBottomSheet extends StatelessWidget {
                         color: isSelected ? _green : Colors.black54,
                         size: 20),
                     const SizedBox(width: 12),
-                    Text(
-                      opt.$3,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                        color: isSelected ? _green : Colors.black87,
-                      ),
-                    ),
+                    Text(opt.$3,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          color: isSelected ? _green : Colors.black87,
+                        )),
                     const Spacer(),
                     if (isSelected)
                       Icon(Icons.check_circle, color: _green, size: 20),
@@ -414,7 +519,7 @@ class _SortBottomSheet extends StatelessWidget {
   }
 }
 
-// ─── Price Filter Sheet ────────────────────────────────────────────────────────
+// ─── Price Filter Sheet ───────────────────────────────────────────────────────
 
 class _PriceFilterSheet extends StatefulWidget {
   final VoidCallback onApply;
@@ -426,7 +531,7 @@ class _PriceFilterSheet extends StatefulWidget {
 }
 
 class _PriceFilterSheetState extends State<_PriceFilterSheet> {
-  RangeValues _range = const RangeValues(500, 2000);
+  RangeValues _range = const RangeValues(50, 500);
 
   @override
   Widget build(BuildContext context) {
@@ -447,13 +552,11 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
               ),
             ),
           ),
-          const Text(
-            'Filter by Price',
-            style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87),
-          ),
+          const Text('Filter by Price',
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87)),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -476,8 +579,8 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
             child: RangeSlider(
               values: _range,
               min: 0,
-              max: 3000,
-              divisions: 30,
+              max: 1000,
+              divisions: 20,
               onChanged: (v) => setState(() => _range = v),
             ),
           ),
@@ -492,13 +595,11 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text(
-                'Apply — Sort Price Low to High',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+              child: const Text('Apply — Sort Price Low to High',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
             ),
           ),
         ],
@@ -507,7 +608,7 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
   }
 }
 
-// ─── Rating Filter Sheet ───────────────────────────────────────────────────────
+// ─── Rating Filter Sheet ──────────────────────────────────────────────────────
 
 class _RatingFilterSheet extends StatefulWidget {
   final VoidCallback onApply;
@@ -540,13 +641,11 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
               ),
             ),
           ),
-          const Text(
-            'Filter by Rating',
-            style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87),
-          ),
+          const Text('Filter by Rating',
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87)),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -562,7 +661,8 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                     color: selected ? _green : Colors.grey[100],
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: selected ? _green : Colors.grey.shade300,
+                      color:
+                          selected ? _green : Colors.grey.shade300,
                     ),
                   ),
                   child: Row(
@@ -573,14 +673,13 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                               : const Color(0xFFFFC107),
                           size: 14),
                       const SizedBox(width: 4),
-                      Text(
-                        r.toString(),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: selected ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                      Text(r.toString(),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color:
+                                selected ? Colors.white : Colors.black87,
+                          )),
                     ],
                   ),
                 ),
@@ -605,13 +704,11 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text(
-                'Apply — Sort by Highest Rating',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+              child: const Text('Apply — Sort by Highest Rating',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
             ),
           ),
         ],
@@ -620,7 +717,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
   }
 }
 
-// ─── Bottom Nav Bar ────────────────────────────────────────────────────────────
+// ─── Bottom Nav Bar ───────────────────────────────────────────────────────────
 
 class _BottomNavBar extends StatelessWidget {
   final int activeIndex;
@@ -631,7 +728,8 @@ class _BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     const items = [
       _NavItemData(icon: Icons.home_outlined, label: 'Home'),
-      _NavItemData(icon: Icons.calendar_today_outlined, label: 'Bookings'),
+      _NavItemData(
+          icon: Icons.calendar_today_outlined, label: 'Bookings'),
       _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
       _NavItemData(icon: Icons.person_outline, label: 'Profile'),
     ];
