@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/TurfListingPage.dart'; // ✅ IMPORTANT IMPORT
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
+
+  void _openCategory(BuildContext context, String category) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TurfListingPage(
+          categoryTitle: category,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +22,8 @@ class SearchPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Search Field
+
+            // ─── Search Bar ─────────────────────────────
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -21,6 +34,12 @@ class SearchPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 6,
+                          )
+                        ],
                       ),
                       child: const TextField(
                         autofocus: true,
@@ -33,7 +52,9 @@ class SearchPage extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 10),
+
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: const Text(
@@ -48,18 +69,26 @@ class SearchPage extends StatelessWidget {
               ),
             ),
 
-            // Recent Searches
+            // ─── Recent Searches Card ─────────────────────────────
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                  )
+                ],
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                  Text(
+                children: [
+
+                  const Text(
                     "RECENT SEARCHES",
                     style: TextStyle(
                       fontSize: 12,
@@ -67,22 +96,31 @@ class SearchPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 12),
-                  _RecentItem(title: "Sports Turf",
-                  onTap:(){
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=> const TurfListingPage(),),
-                    );
-                  },
+
+                  const SizedBox(height: 12),
+
+                  _RecentItem(
+                    title: "Sports Turf",
+                    onTap: () => _openCategory(context, "Sports Turf"),
                   ),
-                  _RecentItem(title: "Study Halls",
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=> const StudyHallsScreen(),),);
-                  },
+
+                  _RecentItem(
+                    title: "Study Halls",
+                    onTap: () => _openCategory(context, "Study Halls"),
                   ),
-                  _RecentItem(title: "Libraries"),
+
+                  _RecentItem(
+                    title: "Libraries",
+                    onTap: () => _openCategory(context, "Libraries"),
+                  ),
+
+                  _RecentItem(
+                    title: "Event Halls",
+                    onTap: () => _openCategory(context, "Event Halls"),
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -90,25 +128,47 @@ class SearchPage extends StatelessWidget {
   }
 }
 
+
+// ─── Recent Search Item Widget ─────────────────────────────
+
 class _RecentItem extends StatelessWidget {
+
   final String title;
   final VoidCallback? onTap;
-  const _RecentItem({required this.title,
-  this.onTap,
-  super.key,
+
+  const _RecentItem({
+    required this.title,
+    this.onTap,
+    super.key,
   });
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+
     return GestureDetector(
-      onTap: onTap,            // ✅ USE IT HERE
+      onTap: onTap,
+
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+
         child: Row(
           children: [
-            const Icon(Icons.history, size: 18, color: Colors.grey),
+
+            const Icon(
+              Icons.history,
+              size: 18,
+              color: Colors.grey,
+            ),
+
             const SizedBox(width: 10),
-            Text(title),
+
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
           ],
         ),
       ),
