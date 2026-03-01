@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/Homepage.dart';
-import 'package:spacebook/TurfListingPage.dart';
+import 'package:spacebook/widgets/search_result_widget.dart';
 import 'package:spacebook/auth_screen.dart';
 import 'package:spacebook/main_screen.dart';
 import 'package:spacebook/mybookings.dart';

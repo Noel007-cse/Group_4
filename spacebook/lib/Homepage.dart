@@ -6,7 +6,7 @@ import 'package:spacebook/models/search_result_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
-import 'package:spacebook/TurfListingPage.dart'; // ✅ added for navigation
+import 'package:spacebook/widgets/search_result_widget.dart'; // ✅ added for navigation
 import 'data/category_item_data.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -191,7 +191,7 @@ class _CategoriesSection extends StatelessWidget {
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // ✅ Pass context so each item can navigate
+          // Pass context so each item can navigate
           children: categories
               .map((category) => _CategoryItem(
                     category: category,
@@ -203,12 +203,11 @@ class _CategoriesSection extends StatelessWidget {
     );
   }
 
-  // ✅ Routes each category to TurfListingPage with the right title
   void _onCategoryTap(BuildContext context, String label) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => TurfListingPage(categoryTitle: label),
+        builder: (_) => SearchResultPage(categoryTitle: label),
       ),
     );
   }
@@ -216,13 +215,13 @@ class _CategoriesSection extends StatelessWidget {
 
 class _CategoryItem extends StatelessWidget {
   final CategoryItemModel category;
-  final VoidCallback? onTap; // ✅ added
+  final VoidCallback? onTap;
 
   const _CategoryItem({required this.category, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( // ✅ wrapped in GestureDetector
+    return GestureDetector(
       onTap: onTap,
       child: SizedBox(
         width: 72,

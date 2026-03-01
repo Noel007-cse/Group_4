@@ -1,152 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/models/search_result_model.dart';
-import 'package:spacebook/data/turf_result_data.dart';
+import 'package:spacebook/data/category_result_data.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 
 enum SortType { nearest, priceLow, ratingHigh }
 
 const Color _green = Color(0xFF3F6B00);
 
-// ─── Category-specific data maps ──────────────────────────────────────────────
-// Each category has its own list of spaces shown in the listing page
-
-const List<SearchResultModel> _librarySpaces = [
-  SearchResultModel(
-    id: 101,
-    title: 'City Central Library',
-    distance: '0.3',
-    distanceKm: 0.3,
-    pricePerHr: 80,
-    rating: 4.8,
-    imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 102,
-    title: 'Knowledge Oasis Study Hall',
-    distance: '0.9',
-    distanceKm: 0.9,
-    pricePerHr: 120,
-    rating: 4.9,
-    imageUrl: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 103,
-    title: 'The Reading Room',
-    distance: '1.5',
-    distanceKm: 1.5,
-    pricePerHr: 60,
-    rating: 4.6,
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&fit=crop',
-    isFavorite: false,
-  ),
-];
-
-const List<SearchResultModel> _studyHallSpaces = [
-  SearchResultModel(
-    id: 201,
-    title: 'Focus Study Hub',
-    distance: '0.8',
-    distanceKm: 0.8,
-    pricePerHr: 150,
-    rating: 4.9,
-    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 202,
-    title: 'Skyline Study Lounge',
-    distance: '1.2',
-    distanceKm: 1.2,
-    pricePerHr: 100,
-    rating: 4.7,
-    imageUrl: 'https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 203,
-    title: 'Quiet Corner Study Space',
-    distance: '2.0',
-    distanceKm: 2.0,
-    pricePerHr: 80,
-    rating: 4.5,
-    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&fit=crop',
-    isFavorite: false,
-  ),
-];
-
-const List<SearchResultModel> _eventHallSpaces = [
-  SearchResultModel(
-    id: 301,
-    title: 'The Grand Ballroom',
-    distance: '5.1',
-    distanceKm: 5.1,
-    pricePerHr: 8000,
-    rating: 4.5,
-    imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 302,
-    title: 'Prestige Event Centre',
-    distance: '3.4',
-    distanceKm: 3.4,
-    pricePerHr: 5000,
-    rating: 4.7,
-    imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&fit=crop',
-    isFavorite: false,
-  ),
-  SearchResultModel(
-    id: 303,
-    title: 'Royal Banquet Hall',
-    distance: '6.2',
-    distanceKm: 6.2,
-    pricePerHr: 10000,
-    rating: 4.8,
-    imageUrl: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&fit=crop',
-    isFavorite: false,
-  ),
-];
-
-// Returns correct data list based on category title
-List<SearchResultModel> _getSpacesForCategory(String categoryTitle) {
-  final lower = categoryTitle.toLowerCase();
-  if (lower.contains('librar')) return _librarySpaces;
-  if (lower.contains('study')) return _studyHallSpaces;
-  if (lower.contains('event') || lower.contains('hall')) return _eventHallSpaces;
-  return allTurfs; // default: Sports Turfs
-}
-
-// ─── TurfListingPage ──────────────────────────────────────────────────────────
-
-class TurfListingPage extends StatefulWidget {
+class SearchResultPage extends StatefulWidget {
   final String categoryTitle;
 
-  const TurfListingPage({
+  const SearchResultPage({
     super.key,
-    this.categoryTitle = 'Sports Turf',
+    required this.categoryTitle,
   });
 
   @override
-  State<TurfListingPage> createState() => _TurfListingPageState();
+  State<SearchResultPage> createState() => _SearchResultPageState();
 }
 
-class _TurfListingPageState extends State<TurfListingPage> {
+class _SearchResultPageState extends State<SearchResultPage> {
   late List<SearchResultModel> _spaces;
   SortType _sortType = SortType.nearest;
 
   @override
   void initState() {
     super.initState();
-    _spaces = List.from(_getSpacesForCategory(widget.categoryTitle));
+    _spaces = List.from(getSpacesForCategory(widget.categoryTitle));
   }
 
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
       final sorted = List<SearchResultModel>.from(
-          _getSpacesForCategory(widget.categoryTitle));
+          getSpacesForCategory(widget.categoryTitle));
       switch (type) {
         case SortType.nearest:
           sorted.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
@@ -232,47 +119,50 @@ class _TurfListingPageState extends State<TurfListingPage> {
             // ── Filter chips ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: _showSortSheet,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: _green,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.tune,
-                              color: Colors.white, size: 15),
-                          const SizedBox(width: 6),
-                          Text(
-                            _sortLabel,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _showSortSheet,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: _green,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.tune,
+                                color: Colors.white, size: 15),
+                            const SizedBox(width: 6),
+                            Text(
+                              _sortLabel,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  _FilterChip(
-                    label: 'Price',
-                    isActive: _sortType == SortType.priceLow,
-                    onTap: _showPriceFilter,
-                  ),
-                  const SizedBox(width: 10),
-                  _FilterChip(
-                    label: 'Rating',
-                    isActive: _sortType == SortType.ratingHigh,
-                    onTap: _showRatingFilter,
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    _FilterChip(
+                      label: 'Price',
+                      isActive: _sortType == SortType.priceLow,
+                      onTap: _showPriceFilter,
+                    ),
+                    const SizedBox(width: 10),
+                    _FilterChip(
+                      label: 'Rating',
+                      isActive: _sortType == SortType.ratingHigh,
+                      onTap: _showRatingFilter,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -288,7 +178,6 @@ class _TurfListingPageState extends State<TurfListingPage> {
           ],
         ),
       ),
-      bottomNavigationBar: const _BottomNavBar(activeIndex: 0),
     );
   }
 }
@@ -647,44 +536,47 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                   fontWeight: FontWeight.bold,
                   color: Colors.black87)),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [4.0, 4.2, 4.5, 4.7, 4.9].map((r) {
-              final selected = _minRating == r;
-              return GestureDetector(
-                onTap: () => setState(() => _minRating = r),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: selected ? _green : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color:
-                          selected ? _green : Colors.grey.shade300,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [4.0, 4.2, 4.5, 4.7, 4.9].map((r) {
+                final selected = _minRating == r;
+                return GestureDetector(
+                  onTap: () => setState(() => _minRating = r),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: selected ? _green : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color:
+                            selected ? _green : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.star,
+                            color: selected
+                                ? Colors.white
+                                : const Color(0xFFFFC107),
+                            size: 14),
+                        const SizedBox(width: 4),
+                        Text(r.toString(),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color:
+                                  selected ? Colors.white : Colors.black87,
+                            )),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.star,
-                          color: selected
-                              ? Colors.white
-                              : const Color(0xFFFFC107),
-                          size: 14),
-                      const SizedBox(width: 4),
-                      Text(r.toString(),
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color:
-                                selected ? Colors.white : Colors.black87,
-                          )),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 8),
           Center(
@@ -713,93 +605,6 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
           ),
         ],
       ),
-    );
-  }
-}
-
-// ─── Bottom Nav Bar ───────────────────────────────────────────────────────────
-
-class _BottomNavBar extends StatelessWidget {
-  final int activeIndex;
-
-  const _BottomNavBar({required this.activeIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      _NavItemData(icon: Icons.home_outlined, label: 'Home'),
-      _NavItemData(
-          icon: Icons.calendar_today_outlined, label: 'Bookings'),
-      _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
-      _NavItemData(icon: Icons.person_outline, label: 'Profile'),
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              items.length,
-              (i) => _NavItem(
-                icon: items[i].icon,
-                label: items[i].label,
-                active: i == activeIndex,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItemData {
-  final IconData icon;
-  final String label;
-
-  const _NavItemData({required this.icon, required this.label});
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.active,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = active ? _green : Colors.grey;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: active ? FontWeight.w700 : FontWeight.normal,
-          ),
-        ),
-      ],
     );
   }
 }

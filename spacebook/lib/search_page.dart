@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spacebook/TurfListingPage.dart'; // ✅ IMPORTANT IMPORT
+import 'package:spacebook/widgets/search_result_widget.dart'; 
+
+const Color _green = Color(0xFF3F6B00);
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -8,7 +10,7 @@ class SearchPage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => TurfListingPage(
+        builder: (_) => SearchResultPage(
           categoryTitle: category,
         ),
       ),
@@ -60,7 +62,7 @@ class SearchPage extends StatelessWidget {
                     child: const Text(
                       "Cancel",
                       style: TextStyle(
-                        color: Color(0xFF2E7D32),
+                        color: _green,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -100,8 +102,8 @@ class SearchPage extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   _RecentItem(
-                    title: "Sports Turf",
-                    onTap: () => _openCategory(context, "Sports Turf"),
+                    title: "Sports Turfs",
+                    onTap: () => _openCategory(context, "Sports Turfs"),
                   ),
 
                   _RecentItem(
