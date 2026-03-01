@@ -719,87 +719,87 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
 
 // ─── Bottom Nav Bar ───────────────────────────────────────────────────────────
 
-class _BottomNavBar extends StatelessWidget {
-  final int activeIndex;
+// class _BottomNavBar extends StatelessWidget {
+//   final int activeIndex;
 
-  const _BottomNavBar({required this.activeIndex});
+//   const _BottomNavBar({required this.activeIndex});
 
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      _NavItemData(icon: Icons.home_outlined, label: 'Home'),
-      _NavItemData(
-          icon: Icons.calendar_today_outlined, label: 'Bookings'),
-      _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
-      _NavItemData(icon: Icons.person_outline, label: 'Profile'),
-    ];
+//   @override
+//   Widget build(BuildContext context) {
+//     const items = [
+//       _NavItemData(icon: Icons.home_outlined, label: 'Home'),
+//       _NavItemData(
+//           icon: Icons.calendar_today_outlined, label: 'Bookings'),
+//       _NavItemData(icon: Icons.grid_view_outlined, label: 'My Spaces'),
+//       _NavItemData(icon: Icons.person_outline, label: 'Profile'),
+//     ];
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              items.length,
-              (i) => _NavItem(
-                icon: items[i].icon,
-                label: items[i].label,
-                active: i == activeIndex,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.08),
+//             blurRadius: 10,
+//             offset: const Offset(0, -2),
+//           ),
+//         ],
+//       ),
+//       child: SafeArea(
+//         child: Padding(
+//           padding: const EdgeInsets.symmetric(vertical: 8),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: List.generate(
+//               items.length,
+//               (i) => _NavItem(
+//                 icon: items[i].icon,
+//                 label: items[i].label,
+//                 active: i == activeIndex,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class _NavItemData {
-  final IconData icon;
-  final String label;
+// class _NavItemData {
+//   final IconData icon;
+//   final String label;
 
-  const _NavItemData({required this.icon, required this.label});
-}
+//   const _NavItemData({required this.icon, required this.label});
+// }
 
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool active;
+// class _NavItem extends StatelessWidget {
+//   final IconData icon;
+//   final String label;
+//   final bool active;
 
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.active,
-  });
+//   const _NavItem({
+//     required this.icon,
+//     required this.label,
+//     required this.active,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    final color = active ? _green : Colors.grey;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: active ? FontWeight.w700 : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final color = active ? _green : Colors.grey;
+//     return Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Icon(icon, color: color, size: 24),
+//         const SizedBox(height: 3),
+//         Text(
+//           label,
+//           style: TextStyle(
+//             fontSize: 11,
+//             color: color,
+//             fontWeight: active ? FontWeight.w700 : FontWeight.normal,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
