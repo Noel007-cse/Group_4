@@ -6,6 +6,7 @@ import 'package:spacebook/models/search_result_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
+import 'package:spacebook/TurfListingPage.dart'; // ✅ added for navigation
 import 'data/category_item_data.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -112,7 +113,6 @@ class _Header extends StatelessWidget {
 class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -121,53 +121,50 @@ class _SearchBar extends StatelessWidget {
             builder: (context) => const SearchPage(),
           ),
         );
-
       },
       child: Container(
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 14),
-          const Icon(Icons.search, color: Colors.grey, size: 20),
-          const SizedBox(width: 8),
-          const Expanded(
-            child: Text(
-              'Search sports, study, or events...',
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF2F4F3),
-              borderRadius: BorderRadius.circular(8),
+          ],
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 14),
+            const Icon(Icons.search, color: Colors.grey, size: 20),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                'Search sports, study, or events...',
+                style: TextStyle(color: Colors.grey, fontSize: 13),
+              ),
             ),
-            child: const Icon(Icons.tune, color: Colors.black54, size: 18),
-          ),
-        ],
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF2F4F3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.tune, color: Colors.black54, size: 18),
+            ),
+          ],
+        ),
       ),
-    ),
     );
-    
   }
 }
 
 // ─── Categories ────────────────────────────────────────────────────────────────
 
 class _CategoriesSection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -194,42 +191,60 @@ class _CategoriesSection extends StatelessWidget {
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // ✅ Pass context so each item can navigate
           children: categories
-              .map((category) => _CategoryItem(category: category))
+              .map((category) => _CategoryItem(
+                    category: category,
+                    onTap: () => _onCategoryTap(context, category.label),
+                  ))
               .toList(),
         ),
       ],
+    );
+  }
+
+  // ✅ Routes each category to TurfListingPage with the right title
+  void _onCategoryTap(BuildContext context, String label) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TurfListingPage(categoryTitle: label),
+      ),
     );
   }
 }
 
 class _CategoryItem extends StatelessWidget {
   final CategoryItemModel category;
+  final VoidCallback? onTap; // ✅ added
 
-  const _CategoryItem({required this.category});
+  const _CategoryItem({required this.category, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 72,
-      child: Column(
-        children: [
-          Container(
-            width: 58,
-            height: 58,
-            decoration: BoxDecoration(
-              color: category.bgColor,
-              borderRadius: BorderRadius.circular(16),
+    return GestureDetector( // ✅ wrapped in GestureDetector
+      onTap: onTap,
+      child: SizedBox(
+        width: 72,
+        child: Column(
+          children: [
+            Container(
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                color: category.bgColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(category.icon, color: category.iconColor, size: 28),
             ),
-            child: Icon(category.icon, color: category.iconColor, size: 28),
-          ),
-          const SizedBox(height: 7),
-          Text(
-            category.label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11.5, color: Colors.black87),
-          ),
-        ],
+            const SizedBox(height: 7),
+            Text(
+              category.label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11.5, color: Colors.black87),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -367,8 +382,8 @@ class _FavoritesSection extends StatelessWidget {
 // ─── Recommended Section ───────────────────────────────────────────────────────
 
 class _RecommendedSection extends StatelessWidget {
-
-  final List<SearchResultModel> spaces = allRecommended; 
+  // ✅ Kept exactly as-is — uses allRecommended from recommedation_data.dart
+  final List<SearchResultModel> spaces = allRecommended;
 
   @override
   Widget build(BuildContext context) {
@@ -394,6 +409,7 @@ class _RecommendedSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
+        // ✅ Kept exactly as-is — uses SpacesCardWidget
         ...spaces.map((space) => SpacesCardWidget(space: space)),
       ],
     );

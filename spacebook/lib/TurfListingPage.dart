@@ -9,14 +9,19 @@ const Color _green = Color(0xFF3F6B00);
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 class TurfListingPage extends StatefulWidget {
-  const TurfListingPage({super.key});
+  // ✅ Added categoryTitle — defaults to 'Sports Turf' so existing code won't break
+  final String categoryTitle;
+
+  const TurfListingPage({
+    super.key,
+    this.categoryTitle = 'Sports Turf',
+  });
 
   @override
   State<TurfListingPage> createState() => _TurfListingPageState();
 }
 
 class _TurfListingPageState extends State<TurfListingPage> {
-
   late List<SearchResultModel> _turfs;
   SortType _sortType = SortType.nearest;
 
@@ -29,7 +34,7 @@ class _TurfListingPageState extends State<TurfListingPage> {
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
-      final sorted = List<SearchResultModel>.from(_turfs);
+      final sorted = List<SearchResultModel>.from(allTurfs);
       switch (type) {
         case SortType.nearest:
           sorted.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
@@ -109,8 +114,8 @@ class _TurfListingPageState extends State<TurfListingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── Top bar ──
-            _TopBar(),
+            // ✅ Pass categoryTitle to TopBar so it shows correct label
+            _TopBar(title: widget.categoryTitle),
             const SizedBox(height: 12),
 
             // ── Filter chips ──
@@ -118,14 +123,13 @@ class _TurfListingPageState extends State<TurfListingPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  // Sort button
                   GestureDetector(
                     onTap: _showSortSheet,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 9),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2E7D32),
+                        color: _green,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -146,16 +150,12 @@ class _TurfListingPageState extends State<TurfListingPage> {
                     ),
                   ),
                   const SizedBox(width: 10),
-
-                  // Price chip
                   _FilterChip(
                     label: 'Price',
                     isActive: _sortType == SortType.priceLow,
                     onTap: _showPriceFilter,
                   ),
                   const SizedBox(width: 10),
-
-                  // Rating chip
                   _FilterChip(
                     label: 'Rating',
                     isActive: _sortType == SortType.ratingHigh,
@@ -185,6 +185,11 @@ class _TurfListingPageState extends State<TurfListingPage> {
 // ─── Top Bar ───────────────────────────────────────────────────────────────────
 
 class _TopBar extends StatelessWidget {
+  // ✅ Added title parameter
+  final String title;
+
+  const _TopBar({this.title = 'Sports Turf'});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -214,7 +219,7 @@ class _TopBar extends StatelessWidget {
           ),
           const SizedBox(width: 10),
 
-          // Search field
+          // ✅ Search field shows the category title dynamically
           Expanded(
             child: Container(
               height: 42,
@@ -230,13 +235,13 @@ class _TopBar extends StatelessWidget {
                 ],
               ),
               child: Row(
-                children: const [
-                  SizedBox(width: 12),
-                  Icon(Icons.search, color: Colors.grey, size: 18),
-                  SizedBox(width: 6),
+                children: [
+                  const SizedBox(width: 12),
+                  const Icon(Icons.search, color: Colors.grey, size: 18),
+                  const SizedBox(width: 6),
                   Text(
-                    'Sports Turf',
-                    style: TextStyle(
+                    title, // ✅ dynamic — shows "Sports Turfs", "Study Halls", etc.
+                    style: const TextStyle(
                         color: Colors.black87,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
@@ -294,9 +299,7 @@ class _FilterChip extends StatelessWidget {
           color: isActive ? const Color(0xFFE8F5E9) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive
-                ? const Color(0xFF2E7D32)
-                : Colors.grey.shade300,
+            color: isActive ? _green : Colors.grey.shade300,
           ),
         ),
         child: Row(
@@ -306,17 +309,14 @@ class _FilterChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: isActive
-                    ? const Color(0xFF2E7D32)
-                    : Colors.black87,
+                color: isActive ? _green : Colors.black87,
               ),
             ),
             const SizedBox(width: 4),
             Icon(
               Icons.keyboard_arrow_down,
               size: 16,
-              color:
-                  isActive ? const Color(0xFF2E7D32) : Colors.black54,
+              color: isActive ? _green : Colors.black54,
             ),
           ],
         ),
@@ -324,9 +324,6 @@ class _FilterChip extends StatelessWidget {
     );
   }
 }
-
-// ─── Turf Card ─────────────────────────────────────────────────────────────────
-
 
 // ─── Sort Bottom Sheet ─────────────────────────────────────────────────────────
 
@@ -353,7 +350,6 @@ class _SortBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle
           Center(
             child: Container(
               width: 40,
@@ -382,22 +378,16 @@ class _SortBottomSheet extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFFE8F5E9)
-                      : Colors.grey[50],
+                  color: isSelected ? const Color(0xFFE8F5E9) : Colors.grey[50],
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected
-                        ? const Color(0xFF2E7D32)
-                        : Colors.grey.shade200,
+                    color: isSelected ? _green : Colors.grey.shade200,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(opt.$2,
-                        color: isSelected
-                            ? const Color(0xFF2E7D32)
-                            : Colors.black54,
+                        color: isSelected ? _green : Colors.black54,
                         size: 20),
                     const SizedBox(width: 12),
                     Text(
@@ -407,15 +397,12 @@ class _SortBottomSheet extends StatelessWidget {
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,
-                        color: isSelected
-                            ? const Color(0xFF2E7D32)
-                            : Colors.black87,
+                        color: isSelected ? _green : Colors.black87,
                       ),
                     ),
                     const Spacer(),
                     if (isSelected)
-                      const Icon(Icons.check_circle,
-                          color: Color(0xFF2E7D32), size: 20),
+                      Icon(Icons.check_circle, color: _green, size: 20),
                   ],
                 ),
               ),
@@ -471,24 +458,19 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '₹${_range.start.toInt()}',
-                style: const TextStyle(
-                    color: Color(0xFF2E7D32), fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '₹${_range.end.toInt()}',
-                style: const TextStyle(
-                    color: Color(0xFF2E7D32), fontWeight: FontWeight.bold),
-              ),
+              Text('₹${_range.start.toInt()}',
+                  style: const TextStyle(
+                      color: _green, fontWeight: FontWeight.bold)),
+              Text('₹${_range.end.toInt()}',
+                  style: const TextStyle(
+                      color: _green, fontWeight: FontWeight.bold)),
             ],
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFF2E7D32),
-              thumbColor: const Color(0xFF2E7D32),
-              overlayColor:
-                  const Color(0xFF2E7D32).withOpacity(0.15),
+              activeTrackColor: _green,
+              thumbColor: _green,
+              overlayColor: _green.withOpacity(0.15),
               inactiveTrackColor: Colors.grey[300],
             ),
             child: RangeSlider(
@@ -505,7 +487,7 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
             child: ElevatedButton(
               onPressed: widget.onApply,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
+                backgroundColor: _green,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -515,8 +497,7 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
               ),
               child: const Text(
                 'Apply — Sort Price Low to High',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),
@@ -567,8 +548,6 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                 color: Colors.black87),
           ),
           const SizedBox(height: 16),
-
-          // Star selector
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [4.0, 4.2, 4.5, 4.7, 4.9].map((r) {
@@ -580,14 +559,10 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: selected
-                        ? const Color(0xFF2E7D32)
-                        : Colors.grey[100],
+                    color: selected ? _green : Colors.grey[100],
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: selected
-                          ? const Color(0xFF2E7D32)
-                          : Colors.grey.shade300,
+                      color: selected ? _green : Colors.grey.shade300,
                     ),
                   ),
                   child: Row(
@@ -603,9 +578,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: selected
-                              ? Colors.white
-                              : Colors.black87,
+                          color: selected ? Colors.white : Colors.black87,
                         ),
                       ),
                     ],
@@ -618,8 +591,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
           Center(
             child: Text(
               'Show venues rated $_minRating and above',
-              style:
-                  const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
           const SizedBox(height: 20),
@@ -628,7 +600,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
             child: ElevatedButton(
               onPressed: widget.onApply,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
+                backgroundColor: _green,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -638,8 +610,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
               ),
               child: const Text(
                 'Apply — Sort by Highest Rating',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),
@@ -716,7 +687,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? const Color(0xFF2E7D32) : Colors.grey;
+    final color = active ? _green : Colors.grey;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
