@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spacebook/data/recommedation_data.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
-import 'package:spacebook/models/search_result_model.dart';
+import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
@@ -382,7 +382,7 @@ class _FavoritesSection extends StatelessWidget {
 
 class _RecommendedSection extends StatelessWidget {
   // ✅ Kept exactly as-is — uses allRecommended from recommedation_data.dart
-  final List<SearchResultModel> spaces = allRecommended;
+  final List<SpaceFrameModel> spaces = allRecommended;
 
   @override
   Widget build(BuildContext context) {

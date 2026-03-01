@@ -1,19 +1,29 @@
 class SpaceFrameModel {
-  final String id;
+  final int id;
   final String title;
-  final String distance;
-  final String price;
-  final String rating;
-  final String image;
-  bool isFavorite;
+  final String area;
+  final String description;
+  final String distance; // e.g. "0.5"
+  final double distanceKm;
+  final int pricePerHr;
+  final double rating;
+  final double noOfRating;
+  final String imageUrl;
+  final bool isFavorite;
+  final bool hasSeats;
 
-  SpaceFrameModel({
+  const SpaceFrameModel({
     required this.id,
     required this.title,
+    required this.area,
+    required this.description,
     required this.distance,
-    required this.price,
+    required this.distanceKm,
+    required this.pricePerHr,
     required this.rating,
-    required this.image,
-    this.isFavorite = false,
+    required this.noOfRating,
+    required this.imageUrl,
+    required this.isFavorite,
+    required this.hasSeats,
   });
 }

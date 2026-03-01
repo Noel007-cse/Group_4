@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spacebook/models/search_result_model.dart';
+import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/data/category_result_data.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 
@@ -20,7 +20,7 @@ class SearchResultPage extends StatefulWidget {
 }
 
 class _SearchResultPageState extends State<SearchResultPage> {
-  late List<SearchResultModel> _spaces;
+  late List<SpaceFrameModel> _spaces;
   SortType _sortType = SortType.nearest;
 
   @override
@@ -32,7 +32,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
-      final sorted = List<SearchResultModel>.from(
+      final sorted = List<SpaceFrameModel>.from(
           getSpacesForCategory(widget.categoryTitle));
       switch (type) {
         case SortType.nearest:

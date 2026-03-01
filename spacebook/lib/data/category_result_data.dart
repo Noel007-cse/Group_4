@@ -1,159 +1,215 @@
-import 'package:spacebook/models/search_result_model.dart';
+import 'package:spacebook/models/space_frame_model.dart';
 
-const List<SearchResultModel> allTurfs = [
-  SearchResultModel(
+const List<SpaceFrameModel> allTurfs = [
+  SpaceFrameModel(
     id: 1,
     title: 'Olympic Green Arena',
     distance: '0.5',
+    area: 'Sports District, Playville',
+    description: 'Modern synthetic turfs designed for football and cricket, featuring floodlights, secure fencing, and well-maintained playing surfaces.',
     distanceKm: 0.5,
     pricePerHr: 1200,
     rating: 4.9,
+    noOfRating: 13,
     imageUrl:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 2,
     title: 'Stellar Multi-Sports Park',
     distance: '1.2',
+    area: 'Sports District, Playville',
+    description: 'Multi-purpose sports facility with multiple courts and fields, offering a variety of sports activities and recreational options.',
     distanceKm: 1.2,
     pricePerHr: 950,
     rating: 4.7,
+    noOfRating: 15,
     imageUrl:'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 3,
     title: "Champion's Court Indoor",
     distance: '2.4',
+    area: 'Playville Suburbs',
+    description: 'Indoor court with premium flooring and climate control, perfect for basketball and volleyball.',
     distanceKm: 2.4,
     pricePerHr: 1500,
     rating: 4.5,
+    noOfRating: 12,
     imageUrl:'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 4,
     title: 'Green Kick Football Arena',
     distance: '3.1',
+    area: 'Playville Suburbs',
+    description: 'Well-maintained football arena with proper lighting and secure fencing.',
     distanceKm: 3.1,
     pricePerHr: 800,
     rating: 4.3,
+    noOfRating: 10,
     imageUrl:'https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 5,
     title: 'Elite Sports Ground',
     distance: '4.0',
+    area: 'Playville Suburbs',
+    description: 'Premium sports ground with excellent facilities and maintenance.',
     distanceKm: 4.0,
     pricePerHr: 1100,
     rating: 4.6,
+    noOfRating: 14,
     imageUrl:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
 ];
 
-const List<SearchResultModel> allLibraries = [
-  SearchResultModel(
+const List<SpaceFrameModel> allLibraries = [
+  SpaceFrameModel(
     id: 101,
     title: 'City Central Library',
     distance: '0.3',
+    area: 'Central Business District, Education City',
+    description: 'Spacious and quiet library with modern amenities, including high-speed internet, comfortable seating, and private study rooms.',
     distanceKm: 0.3,
     pricePerHr: 80,
     rating: 4.8,
+    noOfRating: 18,
     imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 102,
     title: 'Knowledge Oasis Study Hall',
     distance: '0.9',
+    area: 'Education City',
+    description: 'Modern study hall with comfortable seating, high-speed internet, and private study rooms.',
     distanceKm: 0.9,
     pricePerHr: 120,
     rating: 4.9,
+    noOfRating: 20,
     imageUrl: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 103,
     title: 'The Reading Room',
     distance: '1.5',
+    area: 'Education City',
+    description: 'Cozy and quiet reading room with a vast collection of books and comfortable seating.',
     distanceKm: 1.5,
     pricePerHr: 60,
     rating: 4.6,
+    noOfRating: 15,
     imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
 ];
 
-const List<SearchResultModel> allStudyHalls = [
-  SearchResultModel(
+const List<SpaceFrameModel> allStudyHalls = [
+  SpaceFrameModel(
     id: 201,
     title: 'Focus Study Hub',
     distance: '0.8',
+    area: 'Education City',
+    description: 'Spacious and quiet study hub with modern amenities, including high-speed internet, comfortable seating, and private study rooms.',
     distanceKm: 0.8,
     pricePerHr: 150,
     rating: 4.9,
+    noOfRating: 22,
     imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 202,
     title: 'Skyline Study Lounge',
     distance: '1.2',
+    area: 'Education City',
+    description: 'Modern study lounge with comfortable seating, high-speed internet, and a relaxing atmosphere.',
     distanceKm: 1.2,
     pricePerHr: 100,
     rating: 4.7,
+    noOfRating: 16,
     imageUrl: 'https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 203,
     title: 'Quiet Corner Study Space',
     distance: '2.0',
+    area: 'Education City',
+    description: 'Quiet and comfortable study space with minimal distractions.',
     distanceKm: 2.0,
     pricePerHr: 80,
     rating: 4.5,
+    noOfRating: 12,
     imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: true,
   ),
 ];
 
-const List<SearchResultModel> allEventHalls = [
-  SearchResultModel(
+const List<SpaceFrameModel> allEventHalls = [
+  SpaceFrameModel(
     id: 301,
     title: 'The Grand Ballroom',
     distance: '5.1',
+    area: 'Historic District, Entertainment City',
+    description: 'Elegant ballroom with high ceilings, ornate decorations, and premium sound systems, perfect for grand events and celebrations.',
     distanceKm: 5.1,
     pricePerHr: 8000,
     rating: 4.5,
+    noOfRating: 18,
     imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 302,
     title: 'Prestige Event Centre',
     distance: '3.4',
+    area: 'Entertainment City',
+    description: 'Modern event centre with premium facilities and flexible layouts.',
     distanceKm: 3.4,
     pricePerHr: 5000,
     rating: 4.7,
+    noOfRating: 20,
     imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 303,
     title: 'Royal Banquet Hall',
     distance: '6.2',
+    area: 'Entertainment City',
+    description: 'Elegant banquet hall with premium facilities and a grand atmosphere.',
     distanceKm: 6.2,
     pricePerHr: 10000,
     rating: 4.8,
+    noOfRating: 25,
     imageUrl: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&fit=crop',
     isFavorite: false,
+    hasSeats: false,
   ),
 ];
 
 
-List<SearchResultModel> getSpacesForCategory(String categoryTitle) {
+List<SpaceFrameModel> getSpacesForCategory(String categoryTitle) {
   final lower = categoryTitle.toLowerCase();
   if (lower.contains('sports turfs')) return allTurfs;
   if (lower.contains('libraries')) return allLibraries;

@@ -1,33 +1,46 @@
-import 'package:spacebook/models/search_result_model.dart';
+import 'package:spacebook/models/space_frame_model.dart';
 
-const List<SearchResultModel> allRecommended = [
-  SearchResultModel(
+const List<SpaceFrameModel> allRecommended = [
+  SpaceFrameModel(
     id: 1,
     title: 'Premier Arena Soccer Turf',
+    area: 'Downtown District, Playville',
+    description: 'Modern synthetic turfs designed for football and cricket, featuring floodlights, secure fencing, and well-maintained playing surfaces.',
     distance: '2.4',
     distanceKm: 2.4,
     pricePerHr: 1200,
     rating: 4.8,
+    noOfRating: 12,
     imageUrl: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600',
     isFavorite: false,
+    hasSeats: false,
   ),
-  SearchResultModel(
+  SpaceFrameModel(
     id: 2,
     title: 'Focus Hub Study Library',
+    area: 'Central Business District, Education City',
+    description: 'Spacious and quiet study halls with modern amenities, including high-speed internet, comfortable seating, and private study rooms.',
     distance: '0.8',
     distanceKm: 0.8,
     pricePerHr: 150,
     rating: 4.9,
+    noOfRating: 24,
     imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600',
     isFavorite: false,
-  ),SearchResultModel(
+    hasSeats: true,
+  ),
+  SpaceFrameModel(
     id: 3,
     title: 'The Grand Ballroom',
+    area: 'Historic District, Entertainment City',
+    description: 'Elegant ballroom with high ceilings, ornate decorations, and premium sound systems, perfect for grand events and celebrations.',
     distance: '5.1',
     distanceKm: 5.1,
     pricePerHr: 8000,
     rating: 4.5,
+    noOfRating: 18,
     imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600',
     isFavorite: false,
+    hasSeats: true,
   ),
 ];

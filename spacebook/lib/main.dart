@@ -4,8 +4,7 @@ import 'package:spacebook/widgets/search_result_widget.dart';
 import 'package:spacebook/auth_screen.dart';
 import 'package:spacebook/main_screen.dart';
 import 'package:spacebook/mybookings.dart';
-import 'package:spacebook/spacepage1.dart';
-import 'package:spacebook/spacepage2.dart';
+import 'package:spacebook/widgets/space_frame_widget.dart';
 import 'package:spacebook/splash.dart';
 
 void main() {

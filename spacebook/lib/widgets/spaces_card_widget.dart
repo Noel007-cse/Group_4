@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:spacebook/models/search_result_model.dart';
+import 'package:spacebook/models/space_frame_model.dart';
+import 'package:spacebook/widgets/space_frame_widget.dart';
 
 const Color _green = Color(0xFF3F6B00);
 
 class SpacesCardWidget extends StatefulWidget {
-  final SearchResultModel space;
+  final SpaceFrameModel space;
 
   const SpacesCardWidget({required this.space});
 
@@ -107,60 +108,68 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
           ),
 
           // ── Details ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        space.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on_outlined, size: 13, color: Colors.grey),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${space.distance} km away',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SpaceFrameWidget(space: space),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          space.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '₹${space.pricePerHr.toString()}',
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: _green,
                         ),
-                      ),
-                      const TextSpan(
-                        text: ' /hr',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on_outlined, size: 13, color: Colors.grey),
+                            const SizedBox(width: 3),
+                            Text(
+                              '${space.distance} km away',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '₹${space.pricePerHr.toString()}',
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: _green,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: ' /hr',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
