@@ -6,7 +6,7 @@ import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
-import 'package:spacebook/widgets/search_result_widget.dart'; // ✅ added for navigation
+import 'package:spacebook/widgets/search_result_widget.dart'; 
 import 'data/category_item_data.dart';
 
 const Color _green = Color(0xFF3F6B00);

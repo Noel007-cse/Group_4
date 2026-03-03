@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spacebook/data/booking_completed_data.dart';
-import 'package:spacebook/data/booking_upcoming_data.dart';
+import 'package:spacebook/data/booking_data.dart';
 import 'package:spacebook/models/booking_frame_model.dart';
 import 'package:spacebook/widgets/booking_tip_widget.dart';
+
+const Color _green = Color(0xFF3F6B00);
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
@@ -37,10 +38,6 @@ class _MyBookingsPageState extends State<MyBookingsPage>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.maybePop(context),
-        ),
         title: const Text(
           'My Bookings',
           style: TextStyle(
@@ -58,7 +55,7 @@ class _MyBookingsPageState extends State<MyBookingsPage>
               controller: _tabController,
               labelColor: Colors.black87,
               unselectedLabelColor: Colors.grey,
-              indicatorColor: const Color(0xFF2E7D32),
+              indicatorColor: _green,
               indicatorWeight: 2.5,
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.bold,
@@ -169,7 +166,7 @@ class _BookingCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2E7D32),
+                    color: _green,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -224,7 +221,7 @@ class _BookingCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E7D32),
+                        color: _green,
                       ),
                     ),
                     isUpcoming
@@ -259,14 +256,14 @@ class _UpcomingActions extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: const Icon(Icons.navigation_outlined,
-              color: Color(0xFF2E7D32), size: 20),
+              color: _green, size: 20),
         ),
         const SizedBox(width: 10),
         // View Details button
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: _green,
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -296,7 +293,7 @@ class _RebookButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: _green,
         foregroundColor: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
