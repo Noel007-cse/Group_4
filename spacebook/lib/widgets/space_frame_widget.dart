@@ -144,7 +144,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                         children: [
                           Icon(Icons.star_border_outlined, color: Colors.amber, size: 18),
                           SizedBox(width: 4),
-                          Text("${space.rating} (${space.noOfRating} reviews)"),
+                          Text("${space.rating} (${space.noOfRating}K reviews)"),
                         ],
                       ),
                       Text.rich(
@@ -271,7 +271,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                       } else {
                         bgColor = Colors.white;
                         textColor = Colors.black;
-                        border = Border.all(color: _green);
+                        border = Border.all(color: _green, width: 2);
                       }
 
                       return GestureDetector(
@@ -350,7 +350,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                         } else {
                           bgColor = Colors.white;
                           iconColor = _green;
-                          border = Border.all(color: _green);
+                          border = Border.all(color: _green, width: 2);
                         }
 
                         return GestureDetector(

@@ -1,21 +1,6 @@
-// import 'package:flutter/material.dart';
-
-// class MySpacesPage extends StatelessWidget {
-//   const MySpacesPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Center(
-//       child: Text(
-//         "My Spaces Page",
-//         style: TextStyle(fontSize: 22),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:spacebook/data/my_space_data.dart';
+import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/models/booking_frame_model.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -55,7 +40,14 @@ class MySpacesPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: _green,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ListYourSpacePage(),
+            ),
+          );
+        },
         icon: const Icon(Icons.add),
         label: const Text("Add Space"),
       ),

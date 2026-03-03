@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/data/recommedation_data.dart';
+import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
 import 'package:spacebook/models/space_frame_model.dart';
@@ -287,7 +288,7 @@ class _HostBanner extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Turn your empty rooms or fields\ninto income. It\'s free to list.',
+                'Turn your empty seats or fields\ninto income. It\'s free to list.',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.85),
                   fontSize: 13,
@@ -307,9 +308,19 @@ class _HostBanner extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
-                child: const Text(
-                  'List Your Space',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ListYourSpacePage(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'List Your Space',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
                 ),
               ),
             ],
