@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/services/api_service.dart';
 
 const Color _green = Color(0xFF3F6B00);
 
@@ -10,16 +11,14 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController currentPasswordController =
-      TextEditingController();
-  final TextEditingController newPasswordController =
-      TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController currentPasswordController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   bool obscureCurrent = true;
   bool obscureNew = true;
   bool obscureConfirm = true;
+  bool _isLoading = false;
 
   bool hasMinLength = false;
   bool hasUppercase = false;
@@ -31,8 +30,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       hasMinLength = value.length >= 8;
       hasUppercase = value.contains(RegExp(r'[A-Z]'));
       hasSpecialChar = value.contains(RegExp(r'[!@#\$&*~]'));
-      passwordsMatch =
-          value == confirmPasswordController.text &&
+      passwordsMatch = value == confirmPasswordController.text &&
           confirmPasswordController.text.isNotEmpty;
     });
   }
@@ -40,9 +38,37 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   void validateConfirm(String value) {
     setState(() {
       passwordsMatch =
-          value == newPasswordController.text &&
-          value.isNotEmpty;
+          value == newPasswordController.text && value.isNotEmpty;
     });
+  }
+
+  Future<void> _handleUpdatePassword() async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await ApiService.changePassword(
+        currentPasswordController.text.trim(),
+        newPasswordController.text.trim(),
+      );
+      if (result['message'] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['error'] ?? 'Failed to update password')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Connection error. Is backend running?')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -59,10 +85,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         centerTitle: true,
         title: const Text(
           "Change Password",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w400,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
         ),
       ),
       body: SingleChildScrollView(
@@ -78,7 +101,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               hint: "Enter current password",
             ),
             const SizedBox(height: 20),
-
             _buildLabel("New Password"),
             _buildPasswordField(
               controller: newPasswordController,
@@ -88,7 +110,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               onChanged: validatePassword,
             ),
             const SizedBox(height: 20),
-
             _buildLabel("Confirm New Password"),
             _buildPasswordField(
               controller: confirmPasswordController,
@@ -98,31 +119,28 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               onChanged: validateConfirm,
             ),
             const SizedBox(height: 25),
-
             _buildRequirementsCard(),
-
             const SizedBox(height: 30),
-
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: (hasMinLength &&
-                        hasUppercase &&
-                        hasSpecialChar &&
-                        passwordsMatch)
-                    ? () {}
+                onPressed: (hasMinLength && hasUppercase && hasSpecialChar && passwordsMatch && !_isLoading)
+                    ? _handleUpdatePassword
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _green,
+                  disabledBackgroundColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "Update Password",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "Update Password",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
               ),
             ),
           ],
@@ -134,13 +152,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          color: Colors.grey,
-        ),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 13, color: Colors.grey)),
     );
   }
 
@@ -160,9 +172,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         filled: true,
         fillColor: Colors.white,
         suffixIcon: IconButton(
-          icon: Icon(
-            obscure ? Icons.visibility_off : Icons.visibility,
-          ),
+          icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
           onPressed: toggle,
         ),
         border: OutlineInputBorder(
@@ -183,12 +193,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Password Requirements",
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          const Text("Password Requirements",
+              style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),
           _buildRequirement("At least 8 characters long", hasMinLength),
           _buildRequirement("Include at least one uppercase letter", hasUppercase),

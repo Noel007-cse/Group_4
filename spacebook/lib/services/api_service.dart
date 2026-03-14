@@ -49,6 +49,19 @@ class ApiService {
     currentUser = null;
   }
 
+  static Future<Map<String, dynamic>> changePassword(
+      String currentPassword, String newPassword) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/auth/change-password'),
+      headers: _authHeaders,
+      body: jsonEncode({
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      }),
+    );
+    return jsonDecode(res.body);
+  }
+
   // ── Spaces ──
   static Future<List<dynamic>> getSpaces({String? category}) async {
     final url = category != null
@@ -57,6 +70,55 @@ class ApiService {
     final res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load spaces');
+  }
+
+  static Future<List<dynamic>> getMySpaces() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/spaces/mine'),
+      headers: _authHeaders,
+    );
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load my spaces');
+  }
+
+  static Future<Map<String, dynamic>> createSpace({
+    required String title,
+    required String category,
+    required String area,
+    required String description,
+    required int pricePerHr,
+    required bool hasSeats,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/spaces'),
+      headers: _authHeaders,
+      body: jsonEncode({
+        'title': title,
+        'category': category,
+        'area': area,
+        'description': description,
+        'price_per_hr': pricePerHr,
+        'has_seats': hasSeats,
+      }),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> deleteSpace(int spaceId) async {
+    final res = await http.delete(
+      Uri.parse('$baseUrl/spaces/$spaceId'),
+      headers: _authHeaders,
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> updateSpacePrice(int spaceId, int newPrice) async {
+    final res = await http.put(
+      Uri.parse('$baseUrl/spaces/$spaceId'),
+      headers: _authHeaders,
+      body: jsonEncode({'price_per_hr': newPrice}),
+    );
+    return jsonDecode(res.body);
   }
 
   // ── Bookings ──
