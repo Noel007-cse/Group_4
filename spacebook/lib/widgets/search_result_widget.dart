@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/models/space_frame_model.dart';
-import 'package:spacebook/data/category_result_data.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 import 'package:spacebook/services/api_service.dart';
 
@@ -21,20 +20,21 @@ class SearchResultPage extends StatefulWidget {
 }
 
 class _SearchResultPageState extends State<SearchResultPage> {
-  late List<SpaceFrameModel> _spaces;
+  List<SpaceFrameModel> _spaces = [];
+  List<SpaceFrameModel> _allSpaces = []; // keep original for re-sorting
   SortType _sortType = SortType.nearest;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _loadSpaces();
-    // _spaces = List.from(getSpacesForCategory(widget.categoryTitle));
   }
+
   Future<void> _loadSpaces() async {
-  try {
-    final data = await ApiService.getSpaces(category: widget.categoryTitle);
-    setState(() {
-      _spaces = data.map((json) => SpaceFrameModel(
+    try {
+      final data = await ApiService.getSpaces(category: widget.categoryTitle);
+      final loaded = data.map((json) => SpaceFrameModel(
         id: json['id'] ?? 0,
         title: json['title'] ?? '',
         area: json['area'] ?? '',
@@ -48,17 +48,22 @@ class _SearchResultPageState extends State<SearchResultPage> {
         isFavorite: false,
         hasSeats: json['has_seats'] ?? false,
       )).toList();
-    });
-  } catch (e) {
-    debugPrint('Error: $e');
+
+      setState(() {
+        _allSpaces = loaded;
+        _spaces = loaded;
+        _loading = false;
+      });
+    } catch (e) {
+      debugPrint('Error loading spaces: $e');
+      setState(() => _loading = false);
+    }
   }
-}
 
   void _applySort(SortType type) {
     setState(() {
       _sortType = type;
-      final sorted = List<SpaceFrameModel>.from(
-          getSpacesForCategory(widget.categoryTitle));
+      final sorted = List<SpaceFrameModel>.from(_allSpaces);
       switch (type) {
         case SortType.nearest:
           sorted.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
@@ -141,7 +146,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
             _TopBar(title: widget.categoryTitle),
             const SizedBox(height: 12),
 
-            // ── Filter chips ──
+            // Filter chips
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SingleChildScrollView(
@@ -192,13 +197,22 @@ class _SearchResultPageState extends State<SearchResultPage> {
             ),
             const SizedBox(height: 16),
 
-            // ── Listings ──
+            // Listings
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                itemCount: _spaces.length,
-                itemBuilder: (_, i) => SpacesCardWidget(space: _spaces[i]),
-              ),
+              child: _loading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: _green))
+                  : _spaces.isEmpty
+                      ? const Center(
+                          child: Text('No spaces found',
+                              style: TextStyle(color: Colors.grey)))
+                      : ListView.builder(
+                          padding:
+                              const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          itemCount: _spaces.length,
+                          itemBuilder: (_, i) =>
+                              SpacesCardWidget(space: _spaces[i]),
+                        ),
             ),
           ],
         ),
@@ -314,8 +328,7 @@ class _FilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFFE8F5E9) : Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -577,8 +590,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                       color: selected ? _green : Colors.grey[100],
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color:
-                            selected ? _green : Colors.grey.shade300,
+                        color: selected ? _green : Colors.grey.shade300,
                       ),
                     ),
                     child: Row(
@@ -593,8 +605,9 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color:
-                                  selected ? Colors.white : Colors.black87,
+                              color: selected
+                                  ? Colors.white
+                                  : Colors.black87,
                             )),
                       ],
                     ),
