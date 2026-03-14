@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/models/space_frame_model.dart';
+import 'package:spacebook/services/api_service.dart';
 import 'package:spacebook/widgets/space_frame_widget.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -14,7 +15,13 @@ class SpacesCardWidget extends StatefulWidget {
 }
 
 class _SpacesCardWidgetState extends State<SpacesCardWidget> {
-  bool _isFav = false;
+  late bool _isFav;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFav = ApiService.isFavorite(widget.space.id);
+  }
 
   void _openDetail() {
     Navigator.push(
@@ -46,7 +53,6 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image ──
             Stack(
               children: [
                 ClipRRect(
@@ -66,12 +72,17 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                   ),
                 ),
 
-                // Favorite button — stops tap from propagating to card
+                // Favorite button
                 Positioned(
                   top: 12,
                   left: 12,
                   child: GestureDetector(
-                    onTap: () => setState(() => _isFav = !_isFav),
+                    onTap: () {
+                      setState(() {
+                        _isFav = !_isFav;
+                        ApiService.toggleFavorite(widget.space);
+                      });
+                    },
                     behavior: HitTestBehavior.opaque,
                     child: Container(
                       width: 36,
@@ -121,7 +132,6 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
               ],
             ),
 
-            // ── Details ──
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
               child: Row(

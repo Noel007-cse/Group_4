@@ -23,13 +23,16 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   final TextEditingController _seatsController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController(text: "500");
+  final TextEditingController _priceController =
+      TextEditingController(text: "500");
 
   String _selectedSpaceType = "Select Space Type";
   bool _isLoading = false;
+  bool _isUploadingImage = false;
 
   Uint8List? _pickedImageBytes;
   String _pickedImageName = '';
+  String _uploadedImageUrl = '';
 
   final Map<String, bool> facilities = {
     "Wi-Fi": false,
@@ -78,17 +81,41 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
       final picker = ImagePicker();
       final picked = await picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 800,
-        imageQuality: 75,
+        maxWidth: 1200,
+        imageQuality: 80,
       );
-      if (picked != null) {
-        final bytes = await picked.readAsBytes();
+      if (picked == null) return;
+
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        _pickedImageBytes = bytes;
+        _pickedImageName = picked.name;
+        _uploadedImageUrl = ''; // reset previous upload
+        _isUploadingImage = true;
+      });
+
+      // Upload to Cloudinary immediately after picking
+      try {
+        final url = await ApiService.uploadImageToCloudinary(
+          bytes,
+          picked.name,
+        );
         setState(() {
-          _pickedImageBytes = bytes;
-          _pickedImageName = picked.name;
+          _uploadedImageUrl = url;
+          _isUploadingImage = false;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image uploaded successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } catch (e) {
+        setState(() => _isUploadingImage = false);
+        _showError('Image upload failed. Default image will be used.');
       }
     } catch (e) {
+      setState(() => _isUploadingImage = false);
       _showError('Could not pick image. Try again.');
     }
   }
@@ -110,10 +137,19 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
       _showError('Please enter a price');
       return;
     }
+    if (_isUploadingImage) {
+      _showError('Please wait for image upload to complete');
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
+      // Use Cloudinary URL if uploaded, otherwise use default
+      final imageUrl = _uploadedImageUrl.isNotEmpty
+          ? _uploadedImageUrl
+          : _getDefaultImageForCategory(_selectedSpaceType);
+
       final result = await ApiService.createSpace(
         title: _nameController.text.trim(),
         category: _getCategoryValue(_selectedSpaceType),
@@ -121,7 +157,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
         description: _descriptionController.text.trim(),
         pricePerHr: int.tryParse(_priceController.text.trim()) ?? 500,
         hasSeats: _seatsController.text.trim().isNotEmpty,
-        imageUrl: _getDefaultImageForCategory(_selectedSpaceType),
+        imageUrl: imageUrl,
       );
 
       if (result['id'] != null) {
@@ -173,31 +209,39 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  const Text("Space Name", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Space Name",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. Downtown Sports Arena", controller: _nameController),
+                  _buildTextField("e.g. Downtown Sports Arena",
+                      controller: _nameController),
 
                   const SizedBox(height: 20),
 
-                  const Text("Space Type", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Space Type",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   _buildDropdown(),
 
                   const SizedBox(height: 20),
 
-                  const Text("Number of seats (optional)", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Number of seats (optional)",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. 100", controller: _seatsController, keyboardType: TextInputType.number),
+                  _buildTextField("e.g. 100",
+                      controller: _seatsController,
+                      keyboardType: TextInputType.number),
 
                   const SizedBox(height: 20),
 
-                  const Text("Available Slots", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Available Slots",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: timeSlots.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
@@ -240,9 +284,11 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Location/Address", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Location/Address",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. MG Road, Bangalore", controller: _locationController),
+                  _buildTextField("e.g. MG Road, Bangalore",
+                      controller: _locationController),
 
                   const SizedBox(height: 20),
 
@@ -259,7 +305,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                         children: [
                           Icon(Icons.map, size: 40, color: Colors.grey),
                           SizedBox(height: 6),
-                          Text("Map view", style: TextStyle(color: Colors.grey)),
+                          Text("Map view",
+                              style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -267,7 +314,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Pricing per Hour (INR)", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Pricing per Hour (INR)",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _priceController,
@@ -284,7 +332,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 30),
 
-                  const Text("Facilities", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  const Text("Facilities",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 10),
                   ...facilities.keys.map((facility) {
                     return CheckboxListTile(
@@ -292,22 +341,25 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       title: Text(facility),
                       value: facilities[facility],
                       activeColor: _green,
-                      onChanged: (value) => setState(() => facilities[facility] = value!),
+                      onChanged: (value) =>
+                          setState(() => facilities[facility] = value!),
                     );
                   }),
 
                   const SizedBox(height: 20),
 
-                  // Photo upload from device
-                  const Text("Upload Photo", style: TextStyle(fontWeight: FontWeight.w600)),
+                  // ── Photo Upload with Cloudinary ──
+                  const Text("Upload Photo",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   const Text(
-                    "Tap to pick a photo from your device gallery",
+                    "Pick a photo from your device — it uploads automatically",
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   const SizedBox(height: 10),
+
                   GestureDetector(
-                    onTap: _pickImage,
+                    onTap: _isUploadingImage ? null : _pickImage,
                     child: Container(
                       height: 180,
                       width: double.infinity,
@@ -315,64 +367,120 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _pickedImageBytes != null ? _green : Colors.grey.shade300,
+                          color: _uploadedImageUrl.isNotEmpty
+                              ? _green
+                              : _pickedImageBytes != null
+                                  ? Colors.orange
+                                  : Colors.grey.shade300,
                           width: 2,
                         ),
                       ),
-                      child: _pickedImageBytes != null
-                          ? Stack(
+                      child: _isUploadingImage
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.memory(
-                                    _pickedImageBytes!,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: GestureDetector(
-                                    onTap: () => setState(() {
-                                      _pickedImageBytes = null;
-                                      _pickedImageName = '';
-                                    }),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                                      child: const Icon(Icons.close, color: Colors.white, size: 16),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 8,
-                                  left: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(8)),
-                                    child: Text(_pickedImageName, style: const TextStyle(color: Colors.white, fontSize: 11)),
-                                  ),
+                                const CircularProgressIndicator(color: _green),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Uploading $_pickedImageName...',
+                                  style: const TextStyle(color: Colors.grey, fontSize: 13),
                                 ),
                               ],
                             )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.grey.shade400),
-                                const SizedBox(height: 10),
-                                Text("Tap to select from gallery", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
-                                const SizedBox(height: 4),
-                                Text("JPG, PNG supported", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                              ],
-                            ),
+                          : _pickedImageBytes != null
+                              ? Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.memory(
+                                        _pickedImageBytes!,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    // Upload status badge
+                                    Positioned(
+                                      top: 8,
+                                      left: 8,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: _uploadedImageUrl.isNotEmpty
+                                              ? Colors.green
+                                              : Colors.orange,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              _uploadedImageUrl.isNotEmpty
+                                                  ? Icons.cloud_done
+                                                  : Icons.cloud_upload,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              _uploadedImageUrl.isNotEmpty
+                                                  ? 'Uploaded'
+                                                  : 'Uploading...',
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    // Remove button
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: GestureDetector(
+                                        onTap: () => setState(() {
+                                          _pickedImageBytes = null;
+                                          _pickedImageName = '';
+                                          _uploadedImageUrl = '';
+                                        }),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle),
+                                          child: const Icon(Icons.close,
+                                              color: Colors.white, size: 16),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_photo_alternate_outlined,
+                                        size: 48, color: Colors.grey.shade400),
+                                    const SizedBox(height: 10),
+                                    Text("Tap to select from gallery",
+                                        style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 14)),
+                                    const SizedBox(height: 4),
+                                    Text("Uploads directly to cloud",
+                                        style: TextStyle(
+                                            color: Colors.grey.shade400,
+                                            fontSize: 12)),
+                                  ],
+                                ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  const Text("Description", style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Description",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _descriptionController,
@@ -409,13 +517,14 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       side: const BorderSide(color: _green, width: 2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text("Save Draft", style: TextStyle(fontWeight: FontWeight.w600, color: _green)),
+                    child: const Text("Save Draft",
+                        style: TextStyle(fontWeight: FontWeight.w600, color: _green)),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleDone,
+                    onPressed: (_isLoading || _isUploadingImage) ? null : _handleDone,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _green,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -423,7 +532,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Done", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
+                        : const Text("Done",
+                            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
                   ),
                 ),
               ],
@@ -434,7 +544,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
     );
   }
 
-  Widget _buildTextField(String hint, {TextEditingController? controller, TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(String hint,
+      {TextEditingController? controller,
+      TextInputType keyboardType = TextInputType.text}) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,

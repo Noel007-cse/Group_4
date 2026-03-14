@@ -4,12 +4,11 @@ import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
 import 'package:spacebook/models/space_frame_model.dart';
-import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
 import 'services/api_service.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 import 'package:spacebook/widgets/search_result_widget.dart';
-
+import 'package:spacebook/widgets/space_frame_widget.dart';
 import 'data/category_item_data.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -50,7 +49,7 @@ class HomePage extends StatelessWidget {
 // ─── Header ────────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
-  const _Header({super.key});
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +77,6 @@ class _Header extends StatelessWidget {
             ),
           ],
         ),
-
-        // 🌙 Dark Mode Button
         Container(
           width: 42,
           height: 42,
@@ -120,9 +117,7 @@ class _SearchBar extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const SearchPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const SearchPage()),
         );
       },
       child: Container(
@@ -185,16 +180,13 @@ class _CategoriesSection extends StatelessWidget {
             Text(
               'See All',
               style: TextStyle(
-                  fontSize: 13,
-                  color: _green,
-                  fontWeight: FontWeight.w600),
+                  fontSize: 13, color: _green, fontWeight: FontWeight.w600),
             ),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // Pass context so each item can navigate
           children: categories
               .map((category) => _CategoryItem(
                     category: category,
@@ -237,7 +229,8 @@ class _CategoryItem extends StatelessWidget {
                 color: category.bgColor,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(category.icon, color: category.iconColor, size: 28),
+              child:
+                  Icon(category.icon, color: category.iconColor, size: 28),
             ),
             const SizedBox(height: 7),
             Text(
@@ -266,7 +259,6 @@ class _HostBanner extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Decorative background icon
           Positioned(
             right: -10,
             bottom: -10,
@@ -299,7 +291,14 @@ class _HostBanner extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ListYourSpacePage(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: _green,
@@ -307,22 +306,12 @@ class _HostBanner extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10),
                 ),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ListYourSpacePage(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'List Your Space',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
+                child: const Text(
+                  'List Your Space',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
             ],
@@ -335,9 +324,16 @@ class _HostBanner extends StatelessWidget {
 
 // ─── Favorites ─────────────────────────────────────────────────────────────────
 
-class _FavoritesSection extends StatelessWidget {
+class _FavoritesSection extends StatefulWidget {
+  @override
+  State<_FavoritesSection> createState() => _FavoritesSectionState();
+}
+
+class _FavoritesSectionState extends State<_FavoritesSection> {
   @override
   Widget build(BuildContext context) {
+    final favs = ApiService.favorites;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -349,43 +345,120 @@ class _FavoritesSection extends StatelessWidget {
               color: Colors.black87),
         ),
         const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.25),
-              style: BorderStyle.solid,
+        if (favs.isEmpty)
+          Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.withOpacity(0.25)),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.favorite_border,
+                    size: 36, color: Colors.grey.withOpacity(0.4)),
+                const SizedBox(height: 12),
+                const Text(
+                  'No favorites yet',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Tap the heart icon on any space to\nsave it here for quick access',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 13, color: Colors.grey, height: 1.4),
+                ),
+              ],
+            ),
+          )
+        else
+          SizedBox(
+            height: 130,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: favs.length,
+              itemBuilder: (context, index) {
+                final space = favs[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SpaceFrameWidget(space: space),
+                      ),
+                    ).then((_) => setState(() {}));
+                  },
+                  child: Container(
+                    width: 160,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.07),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12)),
+                          child: Image.network(
+                            space.imageUrl,
+                            height: 80,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              height: 80,
+                              color: Colors.grey[200],
+                              child: const Icon(Icons.image,
+                                  color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
+                          child: Text(
+                            space.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            '₹${space.pricePerHr}/hr',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: _green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          child: Column(
-            children: [
-              Icon(Icons.favorite_border,
-                  size: 36, color: Colors.grey.withOpacity(0.4)),
-              const SizedBox(height: 12),
-              const Text(
-                'No favorites yet',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Tap the heart icon on any space to\nsave it here for quick access',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -394,7 +467,6 @@ class _FavoritesSection extends StatelessWidget {
 // ─── Recommended Section ───────────────────────────────────────────────────────
 
 class _RecommendedSection extends StatelessWidget {
-  // ✅ Kept exactly as-is — uses allRecommended from recommedation_data.dart
   final List<SpaceFrameModel> spaces = allRecommended;
 
   @override
@@ -414,14 +486,11 @@ class _RecommendedSection extends StatelessWidget {
             Text(
               'View map',
               style: TextStyle(
-                  fontSize: 13,
-                  color: _green,
-                  fontWeight: FontWeight.w600),
+                  fontSize: 13, color: _green, fontWeight: FontWeight.w600),
             ),
           ],
         ),
         const SizedBox(height: 14),
-        // ✅ Kept exactly as-is — uses SpacesCardWidget
         ...spaces.map((space) => SpacesCardWidget(space: space)),
       ],
     );

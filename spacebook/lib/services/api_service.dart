@@ -1,10 +1,26 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:spacebook/models/space_frame_model.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:5000/api';
   static String? _token;
   static Map<String, dynamic>? currentUser;
+
+  // ── Favorites ──
+  static final List<SpaceFrameModel> favorites = [];
+
+  static void toggleFavorite(SpaceFrameModel space) {
+    if (favorites.any((s) => s.id == space.id)) {
+      favorites.removeWhere((s) => s.id == space.id);
+    } else {
+      favorites.add(space);
+    }
+  }
+
+  static bool isFavorite(int spaceId) {
+    return favorites.any((s) => s.id == spaceId);
+  }
 
   static void setToken(String token) => _token = token;
 
@@ -47,6 +63,7 @@ class ApiService {
   static void logout() {
     _token = null;
     currentUser = null;
+    favorites.clear();
   }
 
   static Future<Map<String, dynamic>> changePassword(
@@ -60,6 +77,33 @@ class ApiService {
       }),
     );
     return jsonDecode(res.body);
+  }
+
+  // ── Cloudinary Upload ──
+  static Future<String> uploadImageToCloudinary(
+      List<int> imageBytes, String fileName) async {
+    const cloudName = 'drgun1vll';
+    const uploadPreset = 'spacebook';
+
+    final uri = Uri.parse(
+        'https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+
+    final request = http.MultipartRequest('POST', uri)
+      ..fields['upload_preset'] = uploadPreset
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        imageBytes,
+        filename: fileName,
+      ));
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+    final data = jsonDecode(responseBody);
+
+    if (data['secure_url'] != null) {
+      return data['secure_url'] as String;
+    }
+    throw Exception('Cloudinary upload failed: ${data['error']?['message']}');
   }
 
   // ── Spaces ──
