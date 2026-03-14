@@ -6,8 +6,10 @@ import 'package:spacebook/models/category_item_model.dart';
 import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/mybookings.dart';
 import 'package:spacebook/search_page.dart';
+import 'services/api_service.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
-import 'package:spacebook/widgets/search_result_widget.dart'; 
+import 'package:spacebook/widgets/search_result_widget.dart';
+
 import 'data/category_item_data.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -67,7 +69,7 @@ class _Header extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              'Hello, Sourav',
+              'Hello, ${ApiService.currentUser?['name'] ?? 'Guest'}',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

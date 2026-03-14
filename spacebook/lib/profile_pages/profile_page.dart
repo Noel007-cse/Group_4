@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:spacebook/profile_pages/about_us_page.dart';
 import 'package:spacebook/profile_pages/change_password_page.dart';
 import 'package:spacebook/profile_pages/personal_info.dart';
+import 'package:spacebook/services/api_service.dart';
+import 'package:spacebook/auth_screen.dart';
 
 const Color _green = Color(0xFF3F6B00);
 
@@ -17,24 +19,24 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: 30),
-              Center(child: _ProfileHeader()),
-              SizedBox(height: 30),
-              _SectionTitle("ACCOUNT SETTINGS"),
-              SizedBox(height: 12),
-              _AccountSection(),
-              SizedBox(height: 25),
-              _SectionTitle("PREFERENCES"),
-              SizedBox(height: 12),
-              _PreferenceSection(),
-              SizedBox(height: 25),
-              _SectionTitle("SUPPORT"),
-              SizedBox(height: 12),
-              _SupportSection(),
-              SizedBox(height: 30),
+            children: [
+              const SizedBox(height: 30),
+              const Center(child: _ProfileHeader()),
+              const SizedBox(height: 30),
+              const _SectionTitle("ACCOUNT SETTINGS"),
+              const SizedBox(height: 12),
+              const _AccountSection(),
+              const SizedBox(height: 25),
+              const _SectionTitle("PREFERENCES"),
+              const SizedBox(height: 12),
+              const _PreferenceSection(),
+              const SizedBox(height: 25),
+              const _SectionTitle("SUPPORT"),
+              const SizedBox(height: 12),
+              const _SupportSection(),
+              const SizedBox(height: 30),
               _LogoutButton(),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -48,6 +50,9 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final name = ApiService.currentUser?['name'] ?? 'User';
+    final email = ApiService.currentUser?['email'] ?? '';
+
     return Column(
       children: [
         Container(
@@ -58,12 +63,17 @@ class _ProfileHeader extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 45,
-                backgroundImage:
-                    NetworkImage(
-                      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500",
-                    ),
+                backgroundColor: _green.withOpacity(0.2),
+                child: Text(
+                  name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: _green,
+                  ),
+                ),
               ),
               Positioned(
                 bottom: 0,
@@ -72,34 +82,27 @@ class _ProfileHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: _green,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
+                    border: Border.all(color: Colors.white, width: 2),
                   ),
                   padding: const EdgeInsets.all(6),
-                  child: const Icon(
-                    Icons.edit,
-                    size: 16,
-                    color: Colors.white,
-                  ),
+                  child: const Icon(Icons.edit, size: 16, color: Colors.white),
                 ),
               )
             ],
           ),
         ),
         const SizedBox(height: 14),
-        const Text(
-          "Sourav",
-          style: TextStyle(
+        Text(
+          name,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
-          "sourav@gmail.com",
-          style: TextStyle(color: Colors.grey),
+        Text(
+          email,
+          style: const TextStyle(color: Colors.grey),
         ),
         const SizedBox(height: 14),
         ElevatedButton(
@@ -108,7 +111,7 @@ class _ProfileHeader extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => const PersonalInfoPage(),
-              )
+              ),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -116,17 +119,12 @@ class _ProfileHeader extends StatelessWidget {
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
-              side: BorderSide(
-                color: Color(0xFFF8FAFC)
-              )
+              side: const BorderSide(color: Color(0xFFF8FAFC)),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
           child: const Text("Edit Profile"),
-        )
+        ),
       ],
     );
   }
@@ -170,7 +168,8 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
       leading: Icon(icon, color: _green),
       title: Text(title),
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
     );
   }
 }
@@ -196,17 +195,17 @@ class _AccountSection extends StatelessWidget {
               );
             },
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
-          _SettingsTile(
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const _SettingsTile(
             icon: Icons.payment,
             title: "Payment Methods",
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
-          _SettingsTile(
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const _SettingsTile(
             icon: Icons.security,
             title: "Security",
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
           _SettingsTile(
             icon: Icons.lock_outline,
             title: "Change Password",
@@ -247,43 +246,35 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
             icon: Icons.notifications_none,
             title: "Notification Settings",
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
           _SettingsTile(
             icon: Icons.dark_mode_outlined,
             title: "Dark Mode",
             trailing: Switch(
               value: darkMode,
-              onChanged: (value) {
-                setState(() {
-                  darkMode = value;
-                });
-              },
+              activeColor: _green,
+              onChanged: (value) => setState(() => darkMode = value),
             ),
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
           _SettingsTile(
             icon: Icons.notifications_active_outlined,
             title: "Booking Notifications",
             trailing: Switch(
               value: bookingNotifications,
-              onChanged: (value) {
-                setState(() {
-                  bookingNotifications = value;
-                });
-              },
+              activeColor: _green,
+              onChanged: (value) =>
+                  setState(() => bookingNotifications = value),
             ),
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
           _SettingsTile(
             icon: Icons.alarm_outlined,
-            title: "Remainders",
+            title: "Reminders",
             trailing: Switch(
               value: remainders,
-              onChanged: (value) {
-                setState(() {
-                  remainders = value;
-                });
-              },
+              activeColor: _green,
+              onChanged: (value) => setState(() => remainders = value),
             ),
           ),
         ],
@@ -301,11 +292,11 @@ class _SupportSection extends StatelessWidget {
       decoration: _cardDecoration(),
       child: Column(
         children: [
-          _SettingsTile(
+          const _SettingsTile(
             icon: Icons.help_outline,
             title: "Help Center",
           ),
-          Divider(height: 0, color: Color(0xFFF1F5F9)),
+          const Divider(height: 0, color: Color(0xFFF1F5F9)),
           _SettingsTile(
             icon: Icons.info_outline,
             title: "About Us",
@@ -329,22 +320,30 @@ class _LogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: Color(0xFFF1F5F9),
-        )
-      ),
-      child: const Text(
-        "Logout",
-        style: TextStyle(
-          color: Colors.red,
-          fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () {
+        ApiService.logout();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          (route) => false,
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFF1F5F9)),
+        ),
+        child: const Text(
+          "Logout",
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -355,8 +354,6 @@ BoxDecoration _cardDecoration() {
   return BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(16),
-    border: Border.all(
-      color: Color(0xFFF1F5F9),
-    )
+    border: Border.all(color: const Color(0xFFF1F5F9)),
   );
 }

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = 'http://localhost:5000/api';
   static String? _token;
+  static Map<String, dynamic>? currentUser;
 
   static void setToken(String token) => _token = token;
 
@@ -20,7 +21,12 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'name': name, 'email': email, 'password': password}),
     );
-    return jsonDecode(res.body);
+    final data = jsonDecode(res.body);
+    if (data['token'] != null) {
+      setToken(data['token']);
+      currentUser = data['user'];
+    }
+    return data;
   }
 
   static Future<Map<String, dynamic>> login(
@@ -31,8 +37,16 @@ class ApiService {
       body: jsonEncode({'email': email, 'password': password}),
     );
     final data = jsonDecode(res.body);
-    if (data['token'] != null) setToken(data['token']);
+    if (data['token'] != null) {
+      setToken(data['token']);
+      currentUser = data['user'];
+    }
     return data;
+  }
+
+  static void logout() {
+    _token = null;
+    currentUser = null;
   }
 
   // ── Spaces ──
