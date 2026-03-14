@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/main.dart';
 import 'package:spacebook/profile_pages/about_us_page.dart';
 import 'package:spacebook/profile_pages/change_password_page.dart';
 import 'package:spacebook/profile_pages/personal_info.dart';
@@ -253,7 +254,10 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
             trailing: Switch(
               value: darkMode,
               activeColor: _green,
-              onChanged: (value) => setState(() => darkMode = value),
+              onChanged: (value) {
+  setState(() => darkMode = value);
+  SpaceBookApp.of(context)?.toggleTheme();
+},
             ),
           ),
           const Divider(height: 0, color: Color(0xFFF1F5F9)),

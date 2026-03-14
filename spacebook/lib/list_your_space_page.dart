@@ -1,4 +1,6 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:spacebook/services/api_service.dart';
 
 const Color _green = Color(0xFF3F6B00);
@@ -22,10 +24,12 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController(text: "500");
-  final TextEditingController _imageUrlController = TextEditingController();
 
   String _selectedSpaceType = "Select Space Type";
   bool _isLoading = false;
+
+  Uint8List? _pickedImageBytes;
+  String _pickedImageName = '';
 
   final Map<String, bool> facilities = {
     "Wi-Fi": false,
@@ -49,7 +53,6 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
   Set<String> selectedSlots = {};
 
-  // Map dropdown value to database category
   String _getCategoryValue(String type) {
     switch (type) {
       case "Turf": return "Sports Turfs";
@@ -60,8 +63,37 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
     }
   }
 
+  String _getDefaultImageForCategory(String type) {
+    switch (type) {
+      case "Turf": return 'https://images.unsplash.com/photo-1551958219-acbc630e2914?w=600';
+      case "Library": return 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600';
+      case "Study Halls": return 'https://images.unsplash.com/photo-1568667256549-094345857637?w=600';
+      case "Event Halls": return 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600';
+      default: return 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600';
+    }
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        imageQuality: 75,
+      );
+      if (picked != null) {
+        final bytes = await picked.readAsBytes();
+        setState(() {
+          _pickedImageBytes = bytes;
+          _pickedImageName = picked.name;
+        });
+      }
+    } catch (e) {
+      _showError('Could not pick image. Try again.');
+    }
+  }
+
   Future<void> _handleDone() async {
-    // Validate required fields
     if (_nameController.text.trim().isEmpty) {
       _showError('Please enter a space name');
       return;
@@ -89,6 +121,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
         description: _descriptionController.text.trim(),
         pricePerHr: int.tryParse(_priceController.text.trim()) ?? 500,
         hasSeats: _seatsController.text.trim().isNotEmpty,
+        imageUrl: _getDefaultImageForCategory(_selectedSpaceType),
       );
 
       if (result['id'] != null) {
@@ -140,43 +173,31 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  // Space Name
-                  const Text("Space Name",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Space Name", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. Downtown Sports Arena",
-                      controller: _nameController),
+                  _buildTextField("e.g. Downtown Sports Arena", controller: _nameController),
 
                   const SizedBox(height: 20),
 
-                  // Space Type
-                  const Text("Space Type",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Space Type", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   _buildDropdown(),
 
                   const SizedBox(height: 20),
 
-                  // Seats
-                  const Text("Enter the number of seats (optional)",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Number of seats (optional)", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. 100",
-                      controller: _seatsController,
-                      keyboardType: TextInputType.number),
+                  _buildTextField("e.g. 100", controller: _seatsController, keyboardType: TextInputType.number),
 
                   const SizedBox(height: 20),
 
-                  // Time Slots
-                  const Text("Available Slots",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Available Slots", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: timeSlots.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
@@ -202,13 +223,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: _green, width: 2),
                             boxShadow: isSelected
-                                ? [
-                                    BoxShadow(
-                                      color: _green.withOpacity(0.3),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ]
+                                ? [BoxShadow(color: _green.withOpacity(0.3), blurRadius: 6, offset: const Offset(0, 4))]
                                 : [],
                           ),
                           child: Text(
@@ -225,18 +240,14 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  // Location
-                  const Text("Location/Address",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Location/Address", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. MG Road, Bangalore",
-                      controller: _locationController),
+                  _buildTextField("e.g. MG Road, Bangalore", controller: _locationController),
 
                   const SizedBox(height: 20),
 
-                  // Map placeholder
                   Container(
-                    height: 180,
+                    height: 150,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: _green, width: 2),
@@ -246,10 +257,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.map, size: 50, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text("Map view",
-                              style: TextStyle(color: Colors.grey)),
+                          Icon(Icons.map, size: 40, color: Colors.grey),
+                          SizedBox(height: 6),
+                          Text("Map view", style: TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -257,9 +267,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  // Price
-                  const Text("Pricing per Hour (INR)",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Pricing per Hour (INR)", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _priceController,
@@ -268,27 +276,15 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       prefixText: "₹ ",
                       filled: true,
                       fillColor: Colors.grey.shade100,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: _green, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: _green, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+                      enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
 
                   const SizedBox(height: 30),
 
-                  // Facilities
-                  const Text("Facilities",
-                      style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600)),
+                  const Text("Facilities", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 10),
                   ...facilities.keys.map((facility) {
                     return CheckboxListTile(
@@ -296,53 +292,87 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       title: Text(facility),
                       value: facilities[facility],
                       activeColor: _green,
-                      onChanged: (value) {
-                        setState(() => facilities[facility] = value!);
-                      },
+                      onChanged: (value) => setState(() => facilities[facility] = value!),
                     );
                   }),
 
                   const SizedBox(height: 20),
 
-                  // Image URL input (replaces file upload for web)
-                  const Text("Space Image URL",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  // Photo upload from device
+                  const Text("Upload Photo", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   const Text(
-                    "Paste an image URL from unsplash.com or any image link",
+                    "Tap to pick a photo from your device gallery",
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    "https://images.unsplash.com/...",
-                    controller: _imageUrlController,
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Image preview
-                  if (_imageUrlController.text.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        _imageUrlController.text,
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Center(
-                              child: Text("Invalid image URL",
-                                  style: TextStyle(color: Colors.grey))),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      height: 180,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: _pickedImageBytes != null ? _green : Colors.grey.shade300,
+                          width: 2,
                         ),
                       ),
+                      child: _pickedImageBytes != null
+                          ? Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.memory(
+                                    _pickedImageBytes!,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: GestureDetector(
+                                    onTap: () => setState(() {
+                                      _pickedImageBytes = null;
+                                      _pickedImageName = '';
+                                    }),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                                      child: const Icon(Icons.close, color: Colors.white, size: 16),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 8,
+                                  left: 8,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(8)),
+                                    child: Text(_pickedImageName, style: const TextStyle(color: Colors.white, fontSize: 11)),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.grey.shade400),
+                                const SizedBox(height: 10),
+                                Text("Tap to select from gallery", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+                                const SizedBox(height: 4),
+                                Text("JPG, PNG supported", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                              ],
+                            ),
                     ),
+                  ),
 
                   const SizedBox(height: 20),
 
-                  // Description
-                  const Text("Description",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text("Description", style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _descriptionController,
@@ -351,18 +381,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       hintText: "Tell guests what makes your space unique...",
                       filled: true,
                       fillColor: Colors.grey.shade100,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: _green, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: _green, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+                      enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
 
@@ -372,17 +393,11 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
             ),
           ),
 
-          // Bottom buttons
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                )
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
             ),
             child: Row(
               children: [
@@ -392,12 +407,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: _green, width: 2),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text("Save Draft",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, color: _green)),
+                    child: const Text("Save Draft", style: TextStyle(fontWeight: FontWeight.w600, color: _green)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -407,15 +419,11 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _green,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Done",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white)),
+                        : const Text("Done", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
                   ),
                 ),
               ],
@@ -426,29 +434,17 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
     );
   }
 
-  Widget _buildTextField(String hint,
-      {TextEditingController? controller,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(String hint, {TextEditingController? controller, TextInputType keyboardType = TextInputType.text}) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      onChanged: (_) => setState(() {}), // for image preview refresh
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
         fillColor: Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: _green, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: _green, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -467,20 +463,13 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
             isExpanded: true,
             value: _selectedSpaceType,
             items: const [
-              DropdownMenuItem(
-                  value: "Select Space Type",
-                  child: Text("Select Space Type")),
+              DropdownMenuItem(value: "Select Space Type", child: Text("Select Space Type")),
               DropdownMenuItem(value: "Turf", child: Text("Turf")),
-              DropdownMenuItem(
-                  value: "Library", child: Text("Library")),
-              DropdownMenuItem(
-                  value: "Study Halls", child: Text("Study Halls")),
-              DropdownMenuItem(
-                  value: "Event Halls", child: Text("Event Halls")),
+              DropdownMenuItem(value: "Library", child: Text("Library")),
+              DropdownMenuItem(value: "Study Halls", child: Text("Study Halls")),
+              DropdownMenuItem(value: "Event Halls", child: Text("Event Halls")),
             ],
-            onChanged: (value) {
-              setState(() => _selectedSpaceType = value!);
-            },
+            onChanged: (value) => setState(() => _selectedSpaceType = value!),
           ),
         ),
       ),
