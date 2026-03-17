@@ -3,8 +3,6 @@ import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/services/api_service.dart';
 import 'package:spacebook/widgets/space_frame_widget.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class SpacesCardWidget extends StatefulWidget {
   final SpaceFrameModel space;
 
@@ -40,11 +38,11 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -108,7 +106,7 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -119,10 +117,10 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                         const SizedBox(width: 3),
                         Text(
                           space.rating.toStringAsFixed(1),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -143,10 +141,10 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                       children: [
                         Text(
                           space.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -170,10 +168,10 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                       children: [
                         TextSpan(
                           text: '₹${space.pricePerHr}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
-                            color: _green,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         const TextSpan(

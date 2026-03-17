@@ -16,7 +16,6 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
   String accountType = "Buyer (I want to book spaces)";
 
-  final greenColor = const Color(0xFF3D7F1E);
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -89,7 +88,7 @@ class _AuthScreenState extends State<AuthScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('OK', style: TextStyle(color: greenColor)),
+            child: Text('OK', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
           ),
         ],
       ),
@@ -111,36 +110,60 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           // Background colour block
           Container(
-            height: 320,
-            color: const Color(0xFF2D6A0A),
+            height: 500,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("bg.jpg"), // Add your image
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
 
           // Green overlay
           Container(
-            height: 320,
-            color: Colors.green.withOpacity(0.6),
+            height: 500,
+            color: Colors.white.withOpacity(0.3),
           ),
 
           // Logo & Title
           Positioned(
-            top: 120,
+            top: 100,
             left: 0,
             right: 0,
             child: Column(
-              children: const [
-                Icon(Icons.business, size: 50, color: Colors.white),
-                SizedBox(height: 10),
+              children:  [
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                        spreadRadius: -5,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.business,
+                    size: 40,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                SizedBox(height: 5),
                 Text(
                   "SpaceBook",
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
+                      color: Theme.of(context).textTheme.titleLarge!.color,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
                   "Book spaces near your place.",
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: Theme.of(context).textTheme.titleMedium!.color),
                 ),
               ],
             ),
@@ -163,8 +186,8 @@ class _AuthScreenState extends State<AuthScreen> {
             builder: (context, controller) {
               return Container(
                 padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(30)),
                 ),
@@ -203,7 +226,7 @@ class _AuthScreenState extends State<AuthScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
         decoration: BoxDecoration(
           color:
-              isLogin == loginValue ? greenColor : Colors.grey.shade200,
+              isLogin == loginValue ? Theme.of(context).colorScheme.primary : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -332,7 +355,7 @@ class _AuthScreenState extends State<AuthScreen> {
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: greenColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -387,7 +410,13 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: CircularProgressIndicator(
                     color: Colors.white, strokeWidth: 2),
               )
-            : Text(text),
+            : Text(
+                text,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold,
+                    fontSize: 16
+                  ),
+              ),
       ),
     );
   }
@@ -399,7 +428,7 @@ class _AuthScreenState extends State<AuthScreen> {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: _isLoading ? null : _handleGoogleSignIn,
-            icon: const Icon(Icons.g_mobiledata, size: 20),
+            icon: const Icon(Icons.g_mobiledata_sharp, size: 20),
             label: const Text("Google"),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),

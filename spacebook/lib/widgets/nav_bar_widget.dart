@@ -35,7 +35,7 @@ class AppNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(
             Icons.store,
-            color: isOwner ? null : Colors.grey.shade300,
+            color: isOwner ? null : Theme.of(context).colorScheme.primaryFixedDim,
           ),
           label: "My Spaces",
         ),

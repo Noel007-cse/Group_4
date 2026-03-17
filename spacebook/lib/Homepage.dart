@@ -12,8 +12,6 @@ import 'package:spacebook/widgets/search_result_widget.dart';
 import 'package:spacebook/widgets/space_frame_widget.dart';
 import 'data/category_item_data.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -82,11 +80,11 @@ class _Header extends StatelessWidget {
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Theme.of(context).colorScheme.primaryContainer,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Theme.of(context).shadowColor.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -124,11 +122,11 @@ class _SearchBar extends StatelessWidget {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -149,10 +147,9 @@ class _SearchBar extends StatelessWidget {
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFFF2F4F3),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.tune, color: Colors.black54, size: 18),
+              child: const Icon(Icons.tune, color: Colors.grey, size: 18),
             ),
           ],
         ),
@@ -171,17 +168,18 @@ class _CategoriesSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Categories',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
             ),
             Text(
               'See All',
               style: TextStyle(
-                  fontSize: 13, color: _green, fontWeight: FontWeight.w600),
+                  fontSize: 13, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -237,7 +235,10 @@ class _CategoryItem extends StatelessWidget {
             Text(
               category.label,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11.5, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 11.5,
+                color: Theme.of(context).textTheme.bodyLarge?.color
+              ),
             ),
           ],
         ),
@@ -255,7 +256,7 @@ class _HostBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _green,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Stack(
@@ -293,22 +294,22 @@ class _HostBanner extends StatelessWidget {
               const SizedBox(height: 18),
               ElevatedButton(
                 onPressed: () {
-  if (!ApiService.isOwner) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Create an Owner account to list your space.'),
-      ),
-    );
-    return;
-  }
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ListYourSpacePage()),
-  );
-},
+                  if (!ApiService.isOwner) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Create an Owner account to list your space.'),
+                      ),
+                    );
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListYourSpacePage()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: _green,
+                  foregroundColor: Theme.of(context).colorScheme.primary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -344,21 +345,21 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Favorites',
           style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: Colors.black87),
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
         ),
         const SizedBox(height: 12),
         if (favs.isEmpty)
           Container(
             width: double.infinity,
-            padding:
-                const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.withOpacity(0.25)),
             ),
@@ -367,12 +368,12 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
                 Icon(Icons.favorite_border,
                     size: 36, color: Colors.grey.withOpacity(0.4)),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'No favorites yet',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -410,7 +411,7 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.07),
+                          color: Theme.of(context).shadowColor.withOpacity(0.08),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -452,9 +453,9 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
                               const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
                             '₹${space.pricePerHr}/hr',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: _green,
+                              color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -521,17 +522,18 @@ class _RecommendedSectionState extends State<_RecommendedSection> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Recommended for You',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
             ),
             Text(
               'View map',
               style: TextStyle(
-                  fontSize: 13, color: _green, fontWeight: FontWeight.w600),
+                  fontSize: 13, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
             ),
           ],
         ),
