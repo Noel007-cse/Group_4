@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:spacebook/main.dart';
 import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 import 'package:spacebook/services/api_service.dart';
 
 enum SortType { nearest, priceLow, ratingHigh }
-
-const Color _green = Color(0xFF3F6B00);
 
 class SearchResultPage extends StatefulWidget {
   final String categoryTitle;
@@ -140,7 +139,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F3),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -160,7 +159,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 9),
                         decoration: BoxDecoration(
-                          color: _green,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -201,10 +200,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
             // Listings
             Expanded(
               child: _loading
-                  ? const Center(
-                      child: CircularProgressIndicator(color: _green))
+                  ? Center(
+                      child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary))
                   : _spaces.isEmpty
-                      ? const Center(
+                      ? Center(
                           child: Text('No spaces found',
                               style: TextStyle(color: Colors.grey)))
                       : ListView.builder(
@@ -241,18 +240,18 @@ class _TopBar extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Theme.of(context).shadowColor.withOpacity(0.08),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: const Icon(Icons.arrow_back,
-                  color: Colors.black87, size: 18),
+              child: Icon(Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer, size: 18),
             ),
           ),
           const SizedBox(width: 10),
@@ -260,11 +259,11 @@ class _TopBar extends StatelessWidget {
             child: Container(
               height: 42,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -277,8 +276,8 @@ class _TopBar extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.black87,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -289,21 +288,30 @@ class _TopBar extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Container(
-            width: 38,
-            height: 38,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.primaryContainer,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 6,
+                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: const Icon(Icons.dark_mode_outlined,
-                color: Colors.black54, size: 18),
+            child: IconButton(
+              icon: Icon(
+                Theme.of(context).brightness == Brightness.dark
+                    ? Icons.light_mode
+                    : Icons.dark_mode_outlined,
+                size: 20,
+              ),
+              onPressed: () {
+                SpaceBookApp.of(context)?.toggleTheme();
+              },
+            ),
           ),
         ],
       ),
@@ -331,10 +339,10 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFFE8F5E9) : Colors.white,
+          color: isActive ? const Color(0xFFE8F5E9) : Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? _green : Colors.grey.shade300,
+            color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey.shade300,
           ),
         ),
         child: Row(
@@ -344,14 +352,14 @@ class _FilterChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: isActive ? _green : Colors.black87,
+                color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
             const SizedBox(width: 4),
             Icon(
               Icons.keyboard_arrow_down,
               size: 16,
-              color: isActive ? _green : Colors.black54,
+              color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color,
             ),
           ],
         ),
@@ -396,11 +404,13 @@ class _SortBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          const Text('Sort By',
+          Text('Sort By',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+                  color: Theme.of(context).textTheme.bodyLarge?.color
+                )
+              ),
           const SizedBox(height: 16),
           ...options.map((opt) {
             final isSelected = current == opt.$1;
@@ -413,16 +423,16 @@ class _SortBottomSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFFE8F5E9)
-                      : Colors.grey[50],
+                      : Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? _green : Colors.grey.shade200,
+                    color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade200,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(opt.$2,
-                        color: isSelected ? _green : Colors.black54,
+                        color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color,
                         size: 20),
                     const SizedBox(width: 12),
                     Text(opt.$3,
@@ -431,11 +441,11 @@ class _SortBottomSheet extends StatelessWidget {
                           fontWeight: isSelected
                               ? FontWeight.w600
                               : FontWeight.normal,
-                          color: isSelected ? _green : Colors.black87,
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyMedium?.color,
                         )),
                     const Spacer(),
                     if (isSelected)
-                      Icon(Icons.check_circle, color: _green, size: 20),
+                      Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 20),
                   ],
                 ),
               ),
@@ -480,28 +490,30 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
               ),
             ),
           ),
-          const Text('Filter by Price',
+          Text('Filter by Price',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+                  color: Theme.of(context).textTheme.bodyLarge?.color
+                )
+              ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('₹${_range.start.toInt()}',
-                  style: const TextStyle(
-                      color: _green, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
               Text('₹${_range.end.toInt()}',
-                  style: const TextStyle(
-                      color: _green, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
             ],
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: _green,
-              thumbColor: _green,
-              overlayColor: _green.withOpacity(0.15),
+              activeTrackColor: Theme.of(context).colorScheme.primary,
+              thumbColor: Theme.of(context).colorScheme.primary,
+              overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
               inactiveTrackColor: Colors.grey[300],
             ),
             child: RangeSlider(
@@ -518,7 +530,7 @@ class _PriceFilterSheetState extends State<_PriceFilterSheet> {
             child: ElevatedButton(
               onPressed: widget.onApply,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _green,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -569,11 +581,13 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
               ),
             ),
           ),
-          const Text('Filter by Rating',
+          Text('Filter by Rating',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+                  color: Theme.of(context).textTheme.bodyLarge?.color
+                )
+              ),
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -588,10 +602,10 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: selected ? _green : Colors.grey[100],
+                      color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: selected ? _green : Colors.grey.shade300,
+                        color: selected ? Theme.of(context).colorScheme.primary : Colors.grey.shade300,
                       ),
                     ),
                     child: Row(
@@ -608,7 +622,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
                               fontWeight: FontWeight.w600,
                               color: selected
                                   ? Colors.white
-                                  : Colors.black87,
+                                  : Theme.of(context).textTheme.bodyMedium?.color,
                             )),
                       ],
                     ),
@@ -630,7 +644,7 @@ class _RatingFilterSheetState extends State<_RatingFilterSheet> {
             child: ElevatedButton(
               onPressed: widget.onApply,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _green,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/widgets/search_result_widget.dart'; 
 
-const Color _green = Color(0xFF3F6B00);
-
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
@@ -20,7 +18,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F3),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -34,11 +32,11 @@ class SearchPage extends StatelessWidget {
                     child: Container(
                       height: 45,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Theme.of(context).shadowColor.withOpacity(0.05),
                             blurRadius: 6,
                           )
                         ],
@@ -59,10 +57,10 @@ class SearchPage extends StatelessWidget {
 
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text(
+                    child: Text(
                       "Cancel",
                       style: TextStyle(
-                        color: _green,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -76,11 +74,11 @@ class SearchPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Theme.of(context).shadowColor.withOpacity(0.04),
                     blurRadius: 8,
                   )
                 ],
@@ -166,9 +164,9 @@ class _RecentItem extends StatelessWidget {
 
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ],

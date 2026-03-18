@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class Slot {
   final String time;
   final String status;
@@ -73,9 +71,9 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
 
       if (result['id'] != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Booking confirmed! Check My Bookings.'),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
         );
       } else {
@@ -99,7 +97,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
   Widget build(BuildContext context) {
     final space = widget.space;
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +120,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                   left: 16,
                   child: _circleButton(
                     icon: Icons.arrow_back,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                     onTap: () => Navigator.pop(context),
                   ),
                 ),
@@ -132,13 +130,16 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                   child: Row(
                     children: [
                       _circleButton(
-                          icon: Icons.share, color: Colors.black, onTap: () {}),
+                          icon: Icons.share,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          onTap: () {}
+                        ),
                       const SizedBox(width: 10),
                       _circleButton(
                         icon: isFavorite
                             ? Icons.favorite
                             : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.black,
+                        color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onPrimaryContainer,
                         onTap: () =>
                             setState(() => isFavorite = !isFavorite),
                       ),
@@ -151,11 +152,11 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black12,
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
                       blurRadius: 8,
                       offset: Offset(0, -2))
                 ],
@@ -189,10 +190,10 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                           children: [
                             TextSpan(
                               text: "₹${space.pricePerHr}/hr",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: _green,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             )
                           ],
@@ -207,7 +208,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
 
             Container(
               width: double.infinity,
-              color: const Color(0xFFF4F5F7),
+              color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,13 +242,13 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                             margin: const EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? _green
-                                  : Colors.grey.shade200,
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: _green.withOpacity(0.3),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                         blurRadius: 8,
                                         offset: const Offset(0, 4),
                                       )
@@ -262,7 +263,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                                 fontWeight: FontWeight.bold,
                                 color: isSelected
                                     ? Colors.white
-                                    : Colors.black87,
+                                    : Theme.of(context).textTheme.bodyMedium?.color,
                               ),
                             ),
                           ),
@@ -287,17 +288,17 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                       Border? border;
 
                       if (slot.status == "booked") {
-                        bgColor = Colors.grey.shade200;
+                        bgColor = Theme.of(context).colorScheme.primaryContainer;
                         textColor = Colors.grey;
                         border = null;
                       } else if (isSelected) {
-                        bgColor = _green;
+                        bgColor = Theme.of(context).colorScheme.primary;
                         textColor = Colors.white;
                         border = null;
                       } else {
-                        bgColor = Colors.white;
-                        textColor = Colors.black;
-                        border = Border.all(color: _green, width: 2);
+                        bgColor = Theme.of(context).colorScheme.primaryContainer;
+                        textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
+                        border = Border.all(color: Theme.of(context).colorScheme.primary, width: 2);
                       }
 
                       return GestureDetector(
@@ -317,7 +318,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
-                                      color: _green.withOpacity(0.3),
+                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                       blurRadius: 6,
                                       offset: const Offset(0, 4),
                                     )
@@ -365,17 +366,17 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                         Border? border;
 
                         if (seat.status == "booked") {
-                          bgColor = Colors.grey.shade200;
+                          bgColor = Theme.of(context).colorScheme.primaryContainer;
                           iconColor = Colors.grey;
                           border = null;
                         } else if (isSelected) {
-                          bgColor = _green;
+                          bgColor = Theme.of(context).colorScheme.primary;
                           iconColor = Colors.white;
                           border = null;
                         } else {
-                          bgColor = Colors.white;
-                          iconColor = _green;
-                          border = Border.all(color: _green, width: 2);
+                          bgColor = Theme.of(context).colorScheme.primaryContainer;
+                          iconColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
+                          border = Border.all(color: Theme.of(context).colorScheme.primary, width: 2);
                         }
 
                         return GestureDetector(
@@ -396,7 +397,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                                       ? [
                                           BoxShadow(
                                             color:
-                                                _green.withOpacity(0.3),
+                                                Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                             blurRadius: 6,
                                             offset: const Offset(0, 4),
                                           )
@@ -413,7 +414,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                                   fontSize: 11,
                                   color: seat.status == "booked"
                                       ? Colors.grey
-                                      : Colors.black87,
+                                      : Theme.of(context).textTheme.bodyMedium?.color,
                                 ),
                               )
                             ],
@@ -466,8 +467,10 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
       child: Container(
         height: 40,
         width: 40,
-        decoration: const BoxDecoration(
-            color: Colors.white, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            shape: BoxShape.circle
+          ),
         child: Icon(icon, size: 20, color: color),
       ),
     );
@@ -478,11 +481,11 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
       child: Container(
         padding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
           boxShadow: [
             BoxShadow(
-                color: Colors.black12,
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 8,
                 offset: Offset(0, -2))
           ],
@@ -509,7 +512,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(0, 60),
-                backgroundColor: _green,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 elevation: 6,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 28, vertical: 16),
@@ -555,9 +558,11 @@ class FacilityItem extends StatelessWidget {
         Container(
           height: 60,
           width: 60,
-          decoration: const BoxDecoration(
-              color: Color(0xFFE9EFE3), shape: BoxShape.circle),
-          child: Icon(icon, color: _green),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer, 
+              shape: BoxShape.circle
+            ),
+          child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
         const SizedBox(height: 8),
         Text(

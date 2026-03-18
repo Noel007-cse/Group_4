@@ -53,8 +53,9 @@ class _SpaceBookAppState extends State<SpaceBookApp> {
         ),
         colorScheme: ColorScheme.light(
           primary: Color(0xFF3F6B00),
-          surface: Colors.white,
+          surface: Color(0xFFF6F8F8),
           primaryContainer: Colors.white,
+          onPrimaryContainer: Colors.black,
           primaryFixedDim: Colors.grey.shade300,
         ),
       ),
@@ -62,8 +63,8 @@ class _SpaceBookAppState extends State<SpaceBookApp> {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         fontFamily: 'Poppins',
-        scaffoldBackgroundColor: const Color(0xFF1E1E1E),
-        cardColor: const Color(0xFF1E1E1E),
+        scaffoldBackgroundColor:Color(0xFF1E1E1E),
+        cardColor: Color(0xFF1E1E1E),
         shadowColor: Colors.white,
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
@@ -73,8 +74,9 @@ class _SpaceBookAppState extends State<SpaceBookApp> {
         ),
         colorScheme: ColorScheme.dark(
           primary: Color(0xFF3F6B00),
-          surface: Color(0xFF1E1E1E),
+          surface: Color(0xFF1B1B1B),
           primaryContainer: Color(0xFF1E293B),
+          onPrimaryContainer: Colors.white,
           primaryFixedDim: Colors.grey.shade800,
         ),
       ),
