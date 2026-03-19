@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
 
@@ -51,9 +49,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
       if (result['message'] != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Password updated successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
         Navigator.pop(context);
@@ -74,18 +72,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyMedium?.color),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Change Password",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontWeight: FontWeight.w400),
         ),
       ),
       body: SingleChildScrollView(
@@ -129,7 +127,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ? _handleUpdatePassword
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _green,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   disabledBackgroundColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -170,7 +168,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         suffixIcon: IconButton(
           icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
           onPressed: toggle,
@@ -193,8 +191,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Password Requirements",
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          Text("Password Requirements",
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),
           _buildRequirement("At least 8 characters long", hasMinLength),
           _buildRequirement("Include at least one uppercase letter", hasUppercase),
@@ -213,7 +211,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           Icon(
             satisfied ? Icons.check_circle : Icons.radio_button_unchecked,
             size: 18,
-            color: satisfied ? _green : Colors.grey,
+            color: satisfied ? Theme.of(context).colorScheme.primary : Colors.grey,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -221,7 +219,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               text,
               style: TextStyle(
                 fontSize: 13,
-                color: satisfied ? _green : Colors.grey,
+                color: satisfied ? Theme.of(context).colorScheme.primary : Colors.grey,
               ),
             ),
           ),

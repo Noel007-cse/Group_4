@@ -105,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Background colour block
@@ -135,11 +135,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
+                        color: Theme.of(context).colorScheme.shadow.withOpacity(0.25),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                         spreadRadius: -5,
@@ -156,14 +156,14 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   "SpaceBook",
                   style: TextStyle(
-                      color: Theme.of(context).textTheme.titleLarge!.color,
+                      color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
                   "Book spaces near your place.",
-                  style: TextStyle(color: Theme.of(context).textTheme.titleMedium!.color),
+                  style: TextStyle(color: Colors.black),
                 ),
               ],
             ),
@@ -226,13 +226,13 @@ class _AuthScreenState extends State<AuthScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
         decoration: BoxDecoration(
           color:
-              isLogin == loginValue ? Theme.of(context).colorScheme.primary : Colors.grey.shade200,
+              isLogin == loginValue ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           text,
           style: TextStyle(
-            color: isLogin == loginValue ? Colors.white : Colors.black,
+            color: isLogin == loginValue ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
       ),
@@ -338,7 +338,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Colors.grey.shade100,
+      fillColor: Theme.of(context).colorScheme.primaryContainer,
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
       border: OutlineInputBorder(

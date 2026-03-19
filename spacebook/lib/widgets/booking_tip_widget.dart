@@ -21,22 +21,22 @@ class NearbyTipCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFF13EC5B).withOpacity(0.05),
+            color: Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF13EC5B).withOpacity(0.2)),
+            border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.info_outline,
-                  color: Color(0xFF3F6B00), size: 20),
+              Icon(Icons.info_outline,
+                  color: Theme.of(context).colorScheme.primary, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     style: TextStyle(
                         fontSize: 13,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
                         height: 1.4),
                     children: [
                       TextSpan(text: 'Arrive 10 minutes early at '),

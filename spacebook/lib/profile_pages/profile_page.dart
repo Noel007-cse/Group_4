@@ -6,15 +6,13 @@ import 'package:spacebook/profile_pages/personal_info.dart';
 import 'package:spacebook/services/api_service.dart';
 import 'package:spacebook/auth_screen.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -66,13 +64,13 @@ class _ProfileHeader extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 45,
-                backgroundColor: _green.withOpacity(0.2),
+                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                 child: Text(
                   name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: _green,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -81,7 +79,7 @@ class _ProfileHeader extends StatelessWidget {
                 right: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _green,
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -116,8 +114,8 @@ class _ProfileHeader extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            foregroundColor: Theme.of(context).textTheme.bodyMedium?.color,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
               side: const BorderSide(color: Color(0xFFF8FAFC)),
@@ -165,12 +163,16 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: _green),
-      title: Text(title),
-      trailing: trailing ??
-          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+    return Material(
+      borderRadius: BorderRadius.circular(16),
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: ListTile(
+        onTap: onTap,
+        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        title: Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+        trailing: trailing ??
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      ),
     );
   }
 }
@@ -181,7 +183,7 @@ class _AccountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: _cardDecoration(),
+      decoration: _cardDecoration(context),
       child: Column(
         children: [
           _SettingsTile(
@@ -240,7 +242,7 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: _cardDecoration(),
+      decoration: _cardDecoration(context),
       child: Column(
         children: [
           const _SettingsTile(
@@ -253,11 +255,11 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
             title: "Dark Mode",
             trailing: Switch(
               value: darkMode,
-              activeColor: _green,
+              activeColor: Theme.of(context).colorScheme.primary,
               onChanged: (value) {
-  setState(() => darkMode = value);
-  SpaceBookApp.of(context)?.toggleTheme();
-},
+                setState(() => darkMode = value);
+                SpaceBookApp.of(context)?.toggleTheme();
+              },
             ),
           ),
           const Divider(height: 0, color: Color(0xFFF1F5F9)),
@@ -266,7 +268,7 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
             title: "Booking Notifications",
             trailing: Switch(
               value: bookingNotifications,
-              activeColor: _green,
+              activeColor: Theme.of(context).colorScheme.primary,
               onChanged: (value) =>
                   setState(() => bookingNotifications = value),
             ),
@@ -277,7 +279,7 @@ class _PreferenceSectionState extends State<_PreferenceSection> {
             title: "Reminders",
             trailing: Switch(
               value: remainders,
-              activeColor: _green,
+              activeColor: Theme.of(context).colorScheme.primary,
               onChanged: (value) => setState(() => remainders = value),
             ),
           ),
@@ -293,7 +295,7 @@ class _SupportSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: _cardDecoration(),
+      decoration: _cardDecoration(context),
       child: Column(
         children: [
           const _SettingsTile(
@@ -338,14 +340,14 @@ class _LogoutButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.red,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
+          border: Border.all(color: Colors.red),
         ),
         child: const Text(
           "Logout",
           style: TextStyle(
-            color: Colors.red,
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -354,9 +356,9 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-BoxDecoration _cardDecoration() {
+BoxDecoration _cardDecoration(BuildContext context) {
   return BoxDecoration(
-    color: Colors.white,
+    color: Theme.of(context).colorScheme.primaryContainer,
     borderRadius: BorderRadius.circular(16),
     border: Border.all(color: const Color(0xFFF1F5F9)),
   );

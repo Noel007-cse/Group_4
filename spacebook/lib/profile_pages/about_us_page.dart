@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyMedium?.color),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "About Us",
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -35,20 +33,21 @@ class AboutUsPage extends StatelessWidget {
                 color: const Color(0xFFE9F7EF),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.business,
                 size: 32,
-                color: _green,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
 
             const SizedBox(height: 16),
 
             /// App Name
-            const Text(
+            Text(
               "SpaceBook",
               style: TextStyle(
                 fontSize: 22,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -67,27 +66,29 @@ class AboutUsPage extends StatelessWidget {
             const SizedBox(height: 30),
 
             /// Our Story
-            _buildSectionTitle("OUR STORY"),
+            _buildSectionTitle("OUR STORY", context),
             const SizedBox(height: 10),
             _buildCard(
               "Founded in 2023, SpaceBook was born out of the frustration of trying to find reliable public turfs and quiet study areas in bustling cities. What started as a simple directory has evolved into a comprehensive booking platform that empowers thousands of users to reclaim their city's public infrastructure.",
+              context,
             ),
 
             const SizedBox(height: 25),
 
             /// Our Vision
-            _buildSectionTitle("OUR VISION"),
+            _buildSectionTitle("OUR VISION", context),
             const SizedBox(height: 10),
             _buildCard(
               "We envision a world where every individual has seamless access to the spaces they need to thrive—whether it's for physical fitness, creative collaboration, or academic excellence.",
+              context,
             ),
 
             const SizedBox(height: 25),
 
             /// Contact Info
-            _buildSectionTitle("CONTACT INFORMATION"),
+            _buildSectionTitle("CONTACT INFORMATION", context),
             const SizedBox(height: 10),
-            _buildContactCard(),
+            _buildContactCard(context),
 
             const SizedBox(height: 40),
 
@@ -113,26 +114,26 @@ class AboutUsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: _green,
+          color: Theme.of(context).colorScheme.primary,
           letterSpacing: 1,
         ),
       ),
     );
   }
 
-  Widget _buildCard(String text) {
+  Widget _buildCard(String text, BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Text(
@@ -145,11 +146,11 @@ class AboutUsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactCard() {
+  Widget _buildContactCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -193,7 +194,7 @@ class _ContactRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: _green),
+        Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -209,8 +210,9 @@ class _ContactRow extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w500,
                 ),
               ),

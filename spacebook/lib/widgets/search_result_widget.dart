@@ -28,6 +28,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   void initState() {
     super.initState();
     _loadSpaces();
+    print(_allSpaces);
   }
 
   Future<void> _loadSpaces() async {
@@ -40,7 +41,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
         area: json['area'] ?? '',
         description: json['description'] ?? '',
         distance: (json['distance'] ?? 0).toString(),
-        distanceKm: (json['distance'] ?? 0).toDouble(),
+        distanceKm: double.tryParse(json['distance']?.toString() ?? '0') ?? 0,
         pricePerHr: json['price_per_hr'] ?? 0,
         rating: double.tryParse(json['rating'].toString()) ?? 0.0,
         noOfRating: 0,

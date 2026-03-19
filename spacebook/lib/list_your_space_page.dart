@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class Slot {
   final String time;
   final String status;
@@ -23,8 +21,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   final TextEditingController _seatsController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController =
-      TextEditingController(text: "500");
+  final TextEditingController _priceController = TextEditingController(text: "500");
 
   String _selectedSpaceType = "Select Space Type";
   bool _isLoading = false;
@@ -55,16 +52,6 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   ];
 
   Set<String> selectedSlots = {};
-
-  String _getCategoryValue(String type) {
-    switch (type) {
-      case "Turf": return "Sports Turfs";
-      case "Library": return "Libraries";
-      case "Study Halls": return "Study Halls";
-      case "Event Halls": return "Event Halls";
-      default: return type;
-    }
-  }
 
   String _getDefaultImageForCategory(String type) {
     switch (type) {
@@ -105,9 +92,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
           _isUploadingImage = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Image uploaded successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       } catch (e) {
@@ -152,7 +139,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
       final result = await ApiService.createSpace(
         title: _nameController.text.trim(),
-        category: _getCategoryValue(_selectedSpaceType),
+        category: _selectedSpaceType,
         area: _locationController.text.trim(),
         description: _descriptionController.text.trim(),
         pricePerHr: int.tryParse(_priceController.text.trim()) ?? 500,
@@ -162,9 +149,9 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
       if (result['id'] != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Space listed successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
         Navigator.pop(context);
@@ -187,17 +174,17 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodySmall?.color),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           "List Your Space",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600),
         ),
       ),
       body: Column(
@@ -208,24 +195,22 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  const Text("Space Name",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Space Name",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color,fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _buildTextField("e.g. Downtown Sports Arena",
-                      controller: _nameController),
+                  _buildTextField("e.g. Downtown Sports Arena", controller: _nameController),
 
                   const SizedBox(height: 20),
 
-                  const Text("Space Type",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                 Text("Space Type",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color,fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   _buildDropdown(),
 
                   const SizedBox(height: 20),
 
-                  const Text("Number of seats (optional)",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Number of seats (optional)",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   _buildTextField("e.g. 100",
                       controller: _seatsController,
@@ -233,8 +218,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Available Slots",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Available Slots",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   GridView.builder(
                     shrinkWrap: true,
@@ -263,17 +248,17 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isSelected ? _green : Colors.white,
+                            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _green, width: 2),
+                            border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
                             boxShadow: isSelected
-                                ? [BoxShadow(color: _green.withOpacity(0.3), blurRadius: 6, offset: const Offset(0, 4))]
+                                ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 6, offset: const Offset(0, 4))]
                                 : [],
                           ),
                           child: Text(
                             slot.time,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
+                              color: isSelected ? Colors.white : Theme.of(context).colorScheme.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -284,8 +269,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Location/Address",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Location/Address",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   _buildTextField("e.g. MG Road, Bangalore",
                       controller: _locationController),
@@ -296,8 +281,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     height: 150,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: _green, width: 2),
-                      color: Colors.grey.shade200,
+                      border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
+                      color: Theme.of(context).colorScheme.primaryFixedDim,
                     ),
                     child: const Center(
                       child: Column(
@@ -314,8 +299,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Pricing per Hour (INR)",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Pricing per Hour (INR)",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _priceController,
@@ -323,24 +308,24 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     decoration: InputDecoration(
                       prefixText: "₹ ",
                       filled: true,
-                      fillColor: Colors.grey.shade100,
+                      fillColor: Theme.of(context).colorScheme.primaryContainer,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                      focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
-                      enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
 
                   const SizedBox(height: 30),
 
-                  const Text("Facilities",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  Text("Facilities",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 18, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 10),
                   ...facilities.keys.map((facility) {
                     return CheckboxListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(facility),
                       value: facilities[facility],
-                      activeColor: _green,
+                      activeColor: Theme.of(context).colorScheme.primary,
                       onChanged: (value) =>
                           setState(() => facilities[facility] = value!),
                     );
@@ -349,8 +334,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                   const SizedBox(height: 20),
 
                   // ── Photo Upload with Cloudinary ──
-                  const Text("Upload Photo",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Upload Photo",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   const Text(
                     "Pick a photo from your device — it uploads automatically",
@@ -364,14 +349,14 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: _uploadedImageUrl.isNotEmpty
-                              ? _green
+                              ? Theme.of(context).colorScheme.primary
                               : _pickedImageBytes != null
                                   ? Colors.orange
-                                  : Colors.grey.shade300,
+                                  : Theme.of(context).colorScheme.primary,
                           width: 2,
                         ),
                       ),
@@ -379,7 +364,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const CircularProgressIndicator(color: _green),
+                                CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                                 const SizedBox(height: 12),
                                 Text(
                                   'Uploading $_pickedImageName...',
@@ -407,7 +392,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
                                           color: _uploadedImageUrl.isNotEmpty
-                                              ? Colors.green
+                                              ? Theme.of(context).colorScheme.primary
                                               : Colors.orange,
                                           borderRadius: BorderRadius.circular(8),
                                         ),
@@ -470,7 +455,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                                     const SizedBox(height: 4),
                                     Text("Uploads directly to cloud",
                                         style: TextStyle(
-                                            color: Colors.grey.shade400,
+                                            color: Colors.grey.shade500,
                                             fontSize: 12)),
                                   ],
                                 ),
@@ -479,8 +464,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
 
                   const SizedBox(height: 20),
 
-                  const Text("Description",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text("Description",
+                      style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _descriptionController,
@@ -488,10 +473,10 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     decoration: InputDecoration(
                       hintText: "Tell guests what makes your space unique...",
                       filled: true,
-                      fillColor: Colors.grey.shade100,
+                      fillColor: Theme.of(context).colorScheme.primaryContainer,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                      focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
-                      enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
 
@@ -504,8 +489,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+              color: Theme.of(context).colorScheme.surface,
+              boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.08), blurRadius: 10)],
             ),
             child: Row(
               children: [
@@ -514,11 +499,11 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: _green, width: 2),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text("Save Draft",
-                        style: TextStyle(fontWeight: FontWeight.w600, color: _green)),
+                    child: Text("Save Draft",
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -526,7 +511,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                   child: ElevatedButton(
                     onPressed: (_isLoading || _isUploadingImage) ? null : _handleDone,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _green,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
@@ -553,10 +538,10 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
-        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: _green, width: 2), borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -564,8 +549,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   Widget _buildDropdown() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: Border.all(color: _green, width: 2),
+        color: Theme.of(context).colorScheme.primaryContainer,
+        border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: DropdownButtonHideUnderline(
@@ -576,8 +561,8 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
             value: _selectedSpaceType,
             items: const [
               DropdownMenuItem(value: "Select Space Type", child: Text("Select Space Type")),
-              DropdownMenuItem(value: "Turf", child: Text("Turf")),
-              DropdownMenuItem(value: "Library", child: Text("Library")),
+              DropdownMenuItem(value: "Sports Turfs", child: Text("Sports Turfs")),
+              DropdownMenuItem(value: "Libraries", child: Text("Libraries")),
               DropdownMenuItem(value: "Study Halls", child: Text("Study Halls")),
               DropdownMenuItem(value: "Event Halls", child: Text("Event Halls")),
             ],

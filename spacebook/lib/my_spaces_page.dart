@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class MySpacesPage extends StatefulWidget {
   const MySpacesPage({super.key});
 
@@ -14,29 +12,11 @@ class MySpacesPage extends StatefulWidget {
 class _MySpacesPageState extends State<MySpacesPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<dynamic> _mySpaces = [];
-  List<dynamic> _receivedBookings = [];
-  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final spaces = await ApiService.getMySpaces();
-      final bookings = await ApiService.getBookingsForMySpaces();
-      setState(() {
-        _mySpaces = spaces;
-        _receivedBookings = bookings;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
   }
 
   @override
@@ -48,14 +28,14 @@ class _MySpacesPageState extends State<MySpacesPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F3),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'My Spaces',
           style: TextStyle(
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -63,22 +43,22 @@ class _MySpacesPageState extends State<MySpacesPage>
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: _green),
+            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => ListYourSpacePage()),
-            ).then((_) => _loadData()),
+            ),
           ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46),
           child: Container(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             child: TabBar(
               controller: _tabController,
-              labelColor: Colors.black87,
+              labelColor: Theme.of(context).textTheme.titleLarge?.color,
               unselectedLabelColor: Colors.grey,
-              indicatorColor: _green,
+              indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorWeight: 2.5,
               labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold, fontSize: 14),
@@ -90,50 +70,63 @@ class _MySpacesPageState extends State<MySpacesPage>
           ),
         ),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator(color: _green))
-          : TabBarView(
+      body: TabBarView(
               controller: _tabController,
               children: [
-                _MyListingsTab(spaces: _mySpaces, onRefresh: _loadData),
-                _BookingsReceivedTab(bookings: _receivedBookings),
+                _MyListingsTab(),
+                _BookingsReceivedTab(),
               ],
-            ),
+            )
     );
   }
 }
 
 // ── My Listings Tab ────────────────────────────────────────────────────────────
 
-class _MyListingsTab extends StatelessWidget {
-  final List<dynamic> spaces;
-  final VoidCallback onRefresh;
+class _MyListingsTab extends StatefulWidget {
+  @override
+  State<_MyListingsTab> createState() => _MyListingsTabState();
+}
 
-  const _MyListingsTab({required this.spaces, required this.onRefresh});
+class _MyListingsTabState extends State<_MyListingsTab> {
+  List<dynamic> _spaces = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpaces();
+  }
+
+  Future<void> _loadSpaces() async {
+    try {
+      final spaces = await ApiService.getMySpaces();
+
+      setState(() {
+        _spaces = spaces;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (spaces.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.store_outlined, size: 60, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            const Text('No spaces listed yet',
-                style: TextStyle(fontSize: 16, color: Colors.grey)),
-            const SizedBox(height: 8),
-            const Text('Tap + to add your first space',
-                style: TextStyle(fontSize: 13, color: Colors.grey)),
-          ],
-        ),
-      );
+    if (_loading) {
+      return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary));
     }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: spaces.length,
-      itemBuilder: (_, i) => _SpaceCard(space: spaces[i], onRefresh: onRefresh),
+    if (_spaces.isEmpty) {
+      return const Center(child: Text('No spaces listed yet'));
+    }
+    return RefreshIndicator(
+      onRefresh: _loadSpaces,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _spaces.length,
+        itemBuilder: (_, i) =>
+            _SpaceCard(space: _spaces[i], onRefresh: _loadSpaces),
+      ),
     );
   }
 }
@@ -149,11 +142,11 @@ class _SpaceCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Theme.of(context).shadowColor.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -188,10 +181,10 @@ class _SpaceCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         space['title'] ?? '',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Theme.of(context).textTheme.titleLarge?.color,
                         ),
                       ),
                     ),
@@ -199,13 +192,13 @@ class _SpaceCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8F5E9),
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         'ACTIVE',
-                        style: const TextStyle(
-                          color: _green,
+                        style: TextStyle(
+                          color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                         ),
@@ -224,10 +217,10 @@ class _SpaceCard extends StatelessWidget {
                   children: [
                     Text(
                       '₹${space['price_per_hr']}/hr',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: _green,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     Text(
@@ -243,7 +236,7 @@ class _SpaceCard extends StatelessWidget {
                 // Delete button
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
+                  child: ElevatedButton.icon(
                     onPressed: () async {
                       final confirm = await showDialog<bool>(
                         context: context,
@@ -253,32 +246,39 @@ class _SpaceCard extends StatelessWidget {
                               'Are you sure you want to remove this space?'),
                           actions: [
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, false),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () => Navigator.pop(context, false),
                               child: const Text('Cancel'),
                             ),
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, true),
-                              child: const Text('Remove',
-                                  style: TextStyle(color: Colors.red)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Remove'),
                             ),
                           ],
                         ),
                       );
+
                       if (confirm == true) {
                         await ApiService.deleteSpace(space['id']);
                         onRefresh();
                       }
                     },
-                    icon: const Icon(Icons.delete_outline,
-                        color: Colors.red, size: 18),
-                    label: const Text('Remove Listing',
-                        style: TextStyle(color: Colors.red)),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red),
+                    icon: const Icon(Icons.delete_outline, size: 20, color: Colors.white,),
+                    label: const Text('Remove Listing', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,      
+                      foregroundColor: Colors.white,    
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                 ),
@@ -293,35 +293,50 @@ class _SpaceCard extends StatelessWidget {
 
 // ── Bookings Received Tab ──────────────────────────────────────────────────────
 
-class _BookingsReceivedTab extends StatelessWidget {
-  final List<dynamic> bookings;
+class _BookingsReceivedTab extends StatefulWidget {
+  @override
+  State<_BookingsReceivedTab> createState() => _BookingsReceivedTabState();
+}
 
-  const _BookingsReceivedTab({required this.bookings});
+class _BookingsReceivedTabState extends State<_BookingsReceivedTab> {
+  List<dynamic> _bookings = [];
+  bool _loading = true;
+  @override
+  void initState() {
+    super.initState();
+    _loadBookings();
+  }
+
+  Future<void> _loadBookings() async {
+    try {
+      final bookings = await ApiService.getBookingsForMySpaces();
+
+      setState(() {
+        _bookings = bookings;
+        _loading = false;
+      });
+    } catch (e) {
+      print("ERROR: $e");
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (bookings.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.calendar_today_outlined,
-                size: 60, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            const Text('No bookings yet',
-                style: TextStyle(fontSize: 16, color: Colors.grey)),
-            const SizedBox(height: 8),
-            const Text('Bookings for your spaces will appear here',
-                style: TextStyle(fontSize: 13, color: Colors.grey)),
-          ],
-        ),
-      );
+    if (_loading) {
+      return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary));
     }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: bookings.length,
-      itemBuilder: (_, i) => _BookingReceivedCard(booking: bookings[i]),
+    if (_bookings.isEmpty) {
+      return const Center(child: Text('No bookings yet'));
+    }    
+    return RefreshIndicator(
+      onRefresh: _loadBookings,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _bookings.length,
+        itemBuilder: (_, i) =>
+            _BookingReceivedCard(booking: _bookings[i]),
+      ),
     );
   }
 }
@@ -417,10 +432,10 @@ class _BookingReceivedCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '₹${booking['total_price'] ?? 0}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _green,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],

@@ -4,8 +4,6 @@ import 'package:spacebook/models/booking_frame_model.dart';
 import 'package:spacebook/widgets/booking_tip_widget.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 class MyBookingsPage extends StatefulWidget {
@@ -35,14 +33,14 @@ class _MyBookingsPageState extends State<MyBookingsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F3),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'My Bookings',
           style: TextStyle(
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -51,12 +49,12 @@ class _MyBookingsPageState extends State<MyBookingsPage>
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46),
           child: Container(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             child: TabBar(
               controller: _tabController,
-              labelColor: Colors.black87,
+              labelColor: Theme.of(context).textTheme.titleLarge?.color,
               unselectedLabelColor: Colors.grey,
-              indicatorColor: _green,
+              indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorWeight: 2.5,
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.bold,
@@ -130,7 +128,7 @@ class _BookingsListState extends State<_BookingsList> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator(color: _green));
+      return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary));
     }
     if (_bookings.isEmpty) {
       return const Center(child: Text('No bookings found'));
@@ -160,11 +158,11 @@ class _BookingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Theme.of(context).shadowColor.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -199,7 +197,7 @@ class _BookingCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: _green,
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -224,10 +222,10 @@ class _BookingCard extends StatelessWidget {
               children: [
                 Text(
                   booking.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -251,10 +249,10 @@ class _BookingCard extends StatelessWidget {
                   children: [
                     Text(
                       booking.price,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: _green,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     isUpcoming
@@ -288,15 +286,15 @@ class _UpcomingActions extends StatelessWidget {
             color: const Color(0xFFE8F5E9),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(Icons.navigation_outlined,
-              color: _green, size: 20),
+          child: Icon(Icons.navigation_outlined,
+              color: Theme.of(context).colorScheme.primary, size: 20),
         ),
         const SizedBox(width: 10),
         // View Details button
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: _green,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -326,7 +324,7 @@ class _RebookButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        backgroundColor: _green,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(

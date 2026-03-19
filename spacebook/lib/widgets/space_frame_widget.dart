@@ -73,7 +73,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Booking confirmed! Check My Bookings.'),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       } else {

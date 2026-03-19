@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/services/api_service.dart';
 
-const Color _green = Color(0xFF3F6B00);
-
 class PersonalInfoPage extends StatefulWidget {
   const PersonalInfoPage({super.key});
 
@@ -13,8 +11,7 @@ class PersonalInfoPage extends StatefulWidget {
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
   late final TextEditingController nameController;
   late final TextEditingController emailController;
-  final TextEditingController passwordController =
-      TextEditingController(text: "••••••••••");
+  final TextEditingController passwordController = TextEditingController(text: "••••••••••");
 
   bool obscurePassword = true;
   bool _isLoading = false;
@@ -38,9 +35,9 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
 
     if (res['user'] != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Profile updated successfully!'),
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
 
@@ -65,18 +62,18 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyMedium?.color),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Personal Information",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontWeight: FontWeight.w400),
         ),
       ),
       body: SingleChildScrollView(
@@ -94,15 +91,15 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                 children: [
                   CircleAvatar(
                     radius: 45,
-                    backgroundColor: _green.withOpacity(0.2),
+                    backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     child: Text(
                       (ApiService.currentUser?['name'] ?? 'U')
                           .substring(0, 1)
                           .toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
-                        color: _green,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -110,9 +107,10 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      decoration: const BoxDecoration(
-                        color: _green,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
                       padding: const EdgeInsets.all(6),
                       child: const Icon(Icons.edit, size: 16, color: Colors.white),
@@ -144,7 +142,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               readOnly: true,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.primaryContainer,
                 suffixIcon: const Icon(Icons.lock_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -161,7 +159,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _handleSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _green,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -200,7 +198,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
       controller: controller,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
