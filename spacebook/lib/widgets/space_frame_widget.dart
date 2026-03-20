@@ -27,7 +27,7 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
   int selectedDateIndex = 0;
   String selectedTime = "09:00 AM";
   int selectedSeat = 0;
-  bool isFavorite = false;
+  bool _isFav = false;
   bool _isBooking = false;
 
   final List<String> dates = [
@@ -94,6 +94,17 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _addRecommendation();
+    _isFav = widget.space.isFavorite;
+  }
+
+  Future<void> _addRecommendation() async {
+    await ApiService.addRecommend(widget.space.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final space = widget.space;
     return Scaffold(
@@ -136,12 +147,14 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                         ),
                       const SizedBox(width: 10),
                       _circleButton(
-                        icon: isFavorite
+                        icon: _isFav
                             ? Icons.favorite
                             : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onPrimaryContainer,
-                        onTap: () =>
-                            setState(() => isFavorite = !isFavorite),
+                        color: _isFav ? Colors.red : Theme.of(context).colorScheme.onPrimaryContainer,
+                        onTap: () async {
+                          final newState = await ApiService.toggleFavorite(space.id, _isFav);
+                          setState(() => _isFav = newState);
+                        }
                       ),
                     ],
                   ),

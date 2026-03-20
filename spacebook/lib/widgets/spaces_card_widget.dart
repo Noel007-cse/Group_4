@@ -5,21 +5,16 @@ import 'package:spacebook/widgets/space_frame_widget.dart';
 
 class SpacesCardWidget extends StatefulWidget {
   final SpaceFrameModel space;
+  final VoidCallback? onRefresh;
 
-  const SpacesCardWidget({required this.space});
+  const SpacesCardWidget({required this.space, this.onRefresh});
 
   @override
   State<SpacesCardWidget> createState() => _SpacesCardWidgetState();
 }
 
 class _SpacesCardWidgetState extends State<SpacesCardWidget> {
-  late bool _isFav;
-
-  @override
-  void initState() {
-    super.initState();
-    _isFav = ApiService.isFavorite(widget.space.id);
-  }
+  bool _isFav = false;
 
   void _openDetail() {
     Navigator.push(
@@ -27,12 +22,13 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
       MaterialPageRoute(
         builder: (context) => SpaceFrameWidget(space: widget.space),
       ),
-    );
+    ).then((_) => widget.onRefresh?.call());
   }
 
   @override
   Widget build(BuildContext context) {
     final space = widget.space;
+    _isFav = space.isFavorite;
     return GestureDetector(
       onTap: _openDetail,
       child: Container(
@@ -75,11 +71,9 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                   top: 12,
                   left: 12,
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isFav = !_isFav;
-                        ApiService.toggleFavorite(widget.space);
-                      });
+                    onTap: () async {
+                      await ApiService.toggleFavorite(space.id, _isFav);
+                      widget.onRefresh?.call();
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Container(
@@ -90,10 +84,10 @@ class _SpacesCardWidgetState extends State<SpacesCardWidget> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        _isFav ? Icons.favorite : Icons.favorite_border,
-                        color: _isFav ? Colors.red : Colors.black54,
-                        size: 18,
-                      ),
+                              _isFav ? Icons.favorite : Icons.favorite_border,
+                              color: _isFav ? Colors.red : Colors.black54,
+                              size: 16,
+                            ),
                     ),
                   ),
                 ),

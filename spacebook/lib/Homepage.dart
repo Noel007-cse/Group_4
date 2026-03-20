@@ -1,19 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/services/api_service.dart';
-import 'package:spacebook/data/recommedation_data.dart';
 import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
 import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/search_page.dart';
+import 'package:spacebook/widgets/favorites_card_widget.dart';
 import 'services/api_service.dart';
 import 'package:spacebook/widgets/spaces_card_widget.dart';
 import 'package:spacebook/widgets/search_result_widget.dart';
 import 'package:spacebook/widgets/space_frame_widget.dart';
 import 'data/category_item_data.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _loading = true;
+  List<dynamic> _favorites = [];
+  List<dynamic> _recommendations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshAll();
+  }
+
+  Future<void> _loadFavorites() async {
+    try {
+      final data = await ApiService.getFavorites();
+
+      setState(() {
+        _favorites = data.map((d) => SpaceFrameModel(
+          id: d['id'] ?? 0,
+          title: d['title'] ?? '',
+          category: d['category'] ?? '',
+          area: d['area'] ?? '',
+          distance: d['distance'] ?? '0.0',
+          distanceKm: d['distance_km'] ?? 0.0,
+          rating: d['rating'] ?? 0.0,
+          noOfRating: d['no_of_rating'] ?? 0.0,
+          description: d['description'] ?? '',
+          pricePerHr: d['price_per_hr'] ?? 0,
+          hasSeats: d['has_seats'] ?? false,
+          isFavorite: true,
+          imageUrl: d['image_url'] ?? '',
+        )).toList();
+
+        _loading = false;
+      });
+    } catch (e) {
+      print("Error loading favorites: $e");
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _loadRecommended() async {
+    try {
+      final data = await ApiService.getRecommend();
+      setState(() {
+        _recommendations = data.map((d) => SpaceFrameModel(
+          id: d['id'] ?? 0,
+          title: d['title'] ?? '',
+          category: d['category'] ?? '',
+          area: d['area'] ?? '',
+          distance: d['distance'] ?? '0.0',
+          distanceKm: d['distance_km'] ?? 0.0,
+          rating: d['rating'] ?? 0.0,
+          noOfRating: d['no_of_rating'] ?? 0.0,
+          description: d['description'] ?? '',
+          pricePerHr: d['price_per_hr'] ?? 0,
+          isFavorite: d['is_favorite'] ?? false,
+          hasSeats: d['has_seats'] ?? false,
+          imageUrl: d['image_url'] ?? '',
+        )).toList();
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _refreshAll() async {
+    await Future.wait([
+      _loadFavorites(),
+      _loadRecommended(),
+    ]);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +103,21 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _Header(),
-              const SizedBox(height: 16),
-              _SearchBar(),
-              const SizedBox(height: 24),
-              _CategoriesSection(),
-              const SizedBox(height: 20),
-              _HostBanner(),
-              const SizedBox(height: 24),
-              _FavoritesSection(),
-              const SizedBox(height: 24),
-              _RecommendedSection(),
-              const SizedBox(height: 16),
+              if (_loading)
+                const Center(child: CircularProgressIndicator())
+              else
+                _Header(),
+                const SizedBox(height: 16),
+                _SearchBar(onRefresh: _refreshAll,),
+                const SizedBox(height: 24),
+                _CategoriesSection(onRefresh: _refreshAll,),
+                const SizedBox(height: 20),
+                _HostBanner(onRefresh: _refreshAll,),
+                const SizedBox(height: 24),
+                _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll,),
+                const SizedBox(height: 24),
+                _RecommendedSection(recommendations: _recommendations, onRefresh: _refreshAll,),
+                const SizedBox(height: 16),
             ],
           ),
         ),
@@ -110,6 +191,9 @@ class _Header extends StatelessWidget {
 // ─── Search Bar ────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
+  final VoidCallback? onRefresh;
+  const _SearchBar({this.onRefresh});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -117,7 +201,7 @@ class _SearchBar extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SearchPage()),
-        );
+        ).then((_) => onRefresh?.call());
       },
       child: Container(
         height: 48,
@@ -161,6 +245,9 @@ class _SearchBar extends StatelessWidget {
 // ─── Categories ────────────────────────────────────────────────────────────────
 
 class _CategoriesSection extends StatelessWidget {
+  final VoidCallback? onRefresh;
+  const _CategoriesSection({this.onRefresh});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -203,7 +290,7 @@ class _CategoriesSection extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => SearchResultPage(categoryTitle: label),
       ),
-    );
+    ).then((_) => onRefresh?.call());
   }
 }
 
@@ -250,6 +337,9 @@ class _CategoryItem extends StatelessWidget {
 // ─── Host Banner ───────────────────────────────────────────────────────────────
 
 class _HostBanner extends StatelessWidget {
+  final VoidCallback? onRefresh;
+  const _HostBanner({this.onRefresh});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -305,7 +395,7 @@ class _HostBanner extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ListYourSpacePage()),
-                  );
+                  ).then((_) => onRefresh?.call());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -332,16 +422,14 @@ class _HostBanner extends StatelessWidget {
 
 // ─── Favorites ─────────────────────────────────────────────────────────────────
 
-class _FavoritesSection extends StatefulWidget {
-  @override
-  State<_FavoritesSection> createState() => _FavoritesSectionState();
-}
+class _FavoritesSection extends StatelessWidget {
+  final List<dynamic> favorites;
+  final VoidCallback? onRefresh;
 
-class _FavoritesSectionState extends State<_FavoritesSection> {
+  const _FavoritesSection({required this.favorites, this.onRefresh});
+
   @override
   Widget build(BuildContext context) {
-    final favs = ApiService.favorites;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -354,7 +442,8 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
             ),
         ),
         const SizedBox(height: 12),
-        if (favs.isEmpty)
+        
+        if(favorites.isEmpty)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
@@ -391,79 +480,10 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
             height: 130,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: favs.length,
+              itemCount: favorites.length,
               itemBuilder: (context, index) {
-                final space = favs[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SpaceFrameWidget(space: space),
-                      ),
-                    ).then((_) => setState(() {}));
-                  },
-                  child: Container(
-                    width: 160,
-                    margin: const EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).shadowColor.withOpacity(0.08),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(12)),
-                          child: Image.network(
-                            space.imageUrl,
-                            height: 80,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              height: 80,
-                              color: Colors.grey[200],
-                              child: const Icon(Icons.image,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
-                          child: Text(
-                            space.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            '₹${space.pricePerHr}/hr',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                final space = favorites[index];
+                return FavoritesCardWidget(space: space, onRefresh: onRefresh,);
               },
             ),
           ),
@@ -474,47 +494,12 @@ class _FavoritesSectionState extends State<_FavoritesSection> {
 
 // ─── Recommended Section ───────────────────────────────────────────────────────
 
-class _RecommendedSection extends StatefulWidget {
-  @override
-  State<_RecommendedSection> createState() => _RecommendedSectionState();
-}
+class _RecommendedSection extends StatelessWidget {
+  final List<dynamic> recommendations;
+  final VoidCallback? onRefresh;
 
-class _RecommendedSectionState extends State<_RecommendedSection> {
-  List<SpaceFrameModel> _spaces = [];
-  bool _loading = true;
+  const _RecommendedSection({required this.recommendations, this.onRefresh});
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRecommended();
-  }
-
-  Future<void> _loadRecommended() async {
-    try {
-      final data = await ApiService.getRecommend();
-      setState(() {
-        _spaces = data.map((d) => SpaceFrameModel(
-          id: d['id'] ?? 0,
-          title: d['title'] ?? '',
-          category: d['category'] ?? '',
-          area: d['area'] ?? '',
-          distance: d['distance'] ?? '0.0',
-          distanceKm: d['distance_km'] ?? 0.0,
-          rating: d['rating'] ?? 0.0,
-          noOfRating: d['no_of_rating'] ?? 0.0,
-          description: d['description'] ?? '',
-          pricePerHr: d['price_per_hr'] ?? 0,
-          hasSeats: d['has_seats'] ?? false,
-          isFavorite: d['is_favorite'] ?? false,
-          imageUrl: d['image_url'] ?? '',
-        )).toList();
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -538,7 +523,7 @@ class _RecommendedSectionState extends State<_RecommendedSection> {
           ],
         ),
         const SizedBox(height: 14),
-        ..._spaces.map((space) => SpacesCardWidget(space: space)),
+        ...recommendations.map((space) => SpacesCardWidget(space: space, onRefresh: onRefresh,)),
       ],
     );
   }

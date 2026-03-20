@@ -338,7 +338,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Theme.of(context).colorScheme.primaryContainer,
+      fillColor: Theme.of(context).colorScheme.secondaryContainer,
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
       border: OutlineInputBorder(

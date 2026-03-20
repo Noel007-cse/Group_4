@@ -7,21 +7,6 @@ class ApiService {
   static String? _token;
   static Map<String, dynamic>? currentUser;
 
-  // ── Favorites ──
-  static final List<SpaceFrameModel> favorites = [];
-
-  static void toggleFavorite(SpaceFrameModel space) {
-    if (favorites.any((s) => s.id == space.id)) {
-      favorites.removeWhere((s) => s.id == space.id);
-    } else {
-      favorites.add(space);
-    }
-  }
-
-  static bool isFavorite(int spaceId) {
-    return favorites.any((s) => s.id == spaceId);
-  }
-
   static void setToken(String token) => _token = token;
 
   static Map<String, String> get _authHeaders => {
@@ -71,7 +56,6 @@ class ApiService {
   static void logout() {
     _token = null;
     currentUser = null;
-    favorites.clear();
   }
 
   static Future<Map<String, dynamic>> changePassword(
@@ -136,7 +120,10 @@ class ApiService {
     final url = category != null
         ? '$baseUrl/spaces?category=${Uri.encodeComponent(category)}'
         : '$baseUrl/spaces';
-    final res = await http.get(Uri.parse(url));
+    final res = await http.get(
+      Uri.parse(url),
+      headers: _authHeaders
+      );
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load spaces');
   }
@@ -149,6 +136,71 @@ class ApiService {
       );
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load spaces');
+  }
+
+    static Future<void> addRecommend(int spaceId) async {
+    final url = '$baseUrl/recom';
+
+    final res = await http.post(
+      Uri.parse(url),
+      headers: _authHeaders,
+      body: jsonEncode({
+        'space_id': spaceId,
+      }),
+    );
+
+    if (res.statusCode != 201) {
+      throw Exception('Failed to add favorite');
+    }
+  }
+
+  static Future<List<dynamic>> getFavorites() async {
+    final url = '$baseUrl/favorites';
+    final res = await http.get(
+      Uri.parse(url),
+      headers: _authHeaders
+      );
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load favorites');
+  }
+
+  static Future<void> addFavorite(int spaceId) async {
+    final url = '$baseUrl/favorites';
+
+    final res = await http.post(
+      Uri.parse(url),
+      headers: _authHeaders,
+      body: jsonEncode({
+        'space_id': spaceId,
+      }),
+    );
+
+    if (res.statusCode != 201) {
+      throw Exception('Failed to add favorite');
+    }
+  }
+
+  static Future<void> deleteFavorite(int spaceId) async {
+    final url = '$baseUrl/favorites/$spaceId';
+
+    final res = await http.delete(
+      Uri.parse(url),
+      headers: _authHeaders,
+    );
+
+    if (res.statusCode != 200) {
+      throw Exception('Failed to remove favorite');
+    }
+  }
+
+  static Future<bool> toggleFavorite(int spaceId, bool isFav) async {
+    if (isFav) {
+      await deleteFavorite(spaceId);
+      return false;
+    } else {
+      await addFavorite(spaceId);
+      return true;
+    }
   }
 
   static Future<List<dynamic>> getMySpaces() async {

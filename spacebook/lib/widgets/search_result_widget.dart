@@ -28,7 +28,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
   void initState() {
     super.initState();
     _loadSpaces();
-    print(_allSpaces);
   }
 
   Future<void> _loadSpaces() async {
@@ -44,9 +43,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
         distanceKm: double.tryParse(json['distance']?.toString() ?? '0') ?? 0,
         pricePerHr: json['price_per_hr'] ?? 0,
         rating: double.tryParse(json['rating'].toString()) ?? 0.0,
-        noOfRating: 0,
+        noOfRating: json['no_of_rating'] ?? 0.0,
+        isFavorite: json['is_favorite'] ?? false,
         imageUrl: json['image_url'] ?? '',
-        isFavorite: false,
         hasSeats: json['has_seats'] ?? false,
       )).toList();
 
@@ -212,7 +211,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                               const EdgeInsets.fromLTRB(16, 0, 16, 16),
                           itemCount: _spaces.length,
                           itemBuilder: (_, i) =>
-                              SpacesCardWidget(space: _spaces[i]),
+                              SpacesCardWidget(space: _spaces[i], onRefresh: _loadSpaces,),
                         ),
             ),
           ],
