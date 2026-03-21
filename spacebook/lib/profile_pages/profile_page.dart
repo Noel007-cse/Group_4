@@ -360,6 +360,13 @@ BoxDecoration _cardDecoration(BuildContext context) {
   return BoxDecoration(
     color: Theme.of(context).colorScheme.primaryContainer,
     borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFFF1F5F9)),
+    // border: Border.all(color: const Color(0xFFF1F5F9)),
+    boxShadow: [
+      BoxShadow(
+        color: Theme.of(context).shadowColor.withOpacity(0.3),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      )
+    ]
   );
 }

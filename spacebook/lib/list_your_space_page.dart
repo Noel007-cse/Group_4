@@ -248,7 +248,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primaryContainer,
+                            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondaryContainer,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
                             boxShadow: isSelected
@@ -282,7 +282,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
-                      color: Theme.of(context).colorScheme.primaryFixedDim,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
                     ),
                     child: const Center(
                       child: Column(
@@ -308,7 +308,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     decoration: InputDecoration(
                       prefixText: "₹ ",
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.primaryContainer,
+                      fillColor: Theme.of(context).colorScheme.secondaryContainer,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
@@ -349,7 +349,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                       height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: _uploadedImageUrl.isNotEmpty
@@ -473,7 +473,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
                     decoration: InputDecoration(
                       hintText: "Tell guests what makes your space unique...",
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.primaryContainer,
+                      fillColor: Theme.of(context).colorScheme.secondaryContainer,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
@@ -538,7 +538,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Theme.of(context).colorScheme.primaryContainer,
+        fillColor: Theme.of(context).colorScheme.secondaryContainer,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2), borderRadius: BorderRadius.circular(12)),
@@ -549,7 +549,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
   Widget _buildDropdown() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
         borderRadius: BorderRadius.circular(12),
       ),

@@ -227,14 +227,14 @@ class _SearchBar extends StatelessWidget {
                 style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.tune, color: Colors.grey, size: 18),
-            ),
+            // Container(
+            //   margin: const EdgeInsets.only(right: 8),
+            //   padding: const EdgeInsets.all(6),
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(8),
+            //   ),
+            //   child: const Icon(Icons.tune, color: Colors.grey, size: 18),
+            // ),
           ],
         ),
       ),
@@ -263,11 +263,11 @@ class _CategoriesSection extends StatelessWidget {
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
             ),
-            Text(
-              'See All',
-              style: TextStyle(
-                  fontSize: 13, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
-            ),
+            // Text(
+            //   'See All',
+            //   style: TextStyle(
+            //       fontSize: 13, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+            // ),
           ],
         ),
         const SizedBox(height: 14),

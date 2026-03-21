@@ -252,21 +252,19 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                               setState(() => selectedDateIndex = index),
                           child: Container(
                             width: 70,
-                            margin: const EdgeInsets.only(right: 12),
+                            margin: const EdgeInsets.fromLTRB(0,2,12,2),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(16),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      )
-                                    ]
-                                  : [],
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 1),
+                                )
+                              ]   
                             ),
                             alignment: Alignment.center,
                             child: Text(
@@ -328,15 +326,13 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                             color: bgColor,
                             borderRadius: BorderRadius.circular(12),
                             border: border,
-                            boxShadow: isSelected
-                                ? [
-                                    BoxShadow(
-                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ]
-                                : [],
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                )
+                            ]
                           ),
                           child: Text(
                             slot.time,
@@ -406,16 +402,13 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                                   color: bgColor,
                                   borderRadius: BorderRadius.circular(16),
                                   border: border,
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color:
-                                                Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                                            blurRadius: 6,
-                                            offset: const Offset(0, 4),
-                                          )
-                                        ]
-                                      : [],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context).shadowColor.withOpacity(0.08),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    )
+                                  ]
                                 ),
                                 child: Icon(Icons.event_seat,
                                     color: iconColor),
@@ -573,7 +566,14 @@ class FacilityItem extends StatelessWidget {
           width: 60,
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer, 
-              shape: BoxShape.circle
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                )
+              ]
             ),
           child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),

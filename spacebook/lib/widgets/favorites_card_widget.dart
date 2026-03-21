@@ -43,7 +43,7 @@ class _FavoritesCardWidgetState extends State<FavoritesCardWidget> {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
