@@ -133,14 +133,17 @@ class _BookingsListState extends State<_BookingsList> {
     if (_bookings.isEmpty) {
       return const Center(child: Text('No bookings found'));
     }
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      child: Column(
-        children: [
-          ..._bookings.map((b) => _BookingCard(booking: b, isUpcoming: widget.isUpcoming)),
-          const SizedBox(height: 4),
-          const NearbyTipCard(),
-        ],
+    return RefreshIndicator(
+      onRefresh: _loadBookings,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        child: Column(
+          children: [
+            ..._bookings.map((b) => _BookingCard(booking: b, isUpcoming: widget.isUpcoming)),
+            const SizedBox(height: 4),
+            const NearbyTipCard(),
+          ],
+        ),
       ),
     );
   }

@@ -32,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 25),
               const _SectionTitle("SUPPORT"),
               const SizedBox(height: 12),
-              const _SupportSection(),
+              _SupportSection(),
               const SizedBox(height: 30),
               _LogoutButton(),
               const SizedBox(height: 30),

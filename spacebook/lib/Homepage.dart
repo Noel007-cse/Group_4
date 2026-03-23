@@ -98,27 +98,30 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_loading)
-                const Center(child: CircularProgressIndicator())
-              else
-                _Header(),
-                const SizedBox(height: 16),
-                _SearchBar(onRefresh: _refreshAll,),
-                const SizedBox(height: 24),
-                _CategoriesSection(onRefresh: _refreshAll,),
-                const SizedBox(height: 20),
-                _HostBanner(onRefresh: _refreshAll,),
-                const SizedBox(height: 24),
-                _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll,),
-                const SizedBox(height: 24),
-                _RecommendedSection(recommendations: _recommendations, onRefresh: _refreshAll,),
-                const SizedBox(height: 16),
-            ],
+        child: RefreshIndicator(
+          onRefresh: _refreshAll,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_loading)
+                  const Center(child: CircularProgressIndicator())
+                else
+                  _Header(),
+                  const SizedBox(height: 16),
+                  _SearchBar(onRefresh: _refreshAll,),
+                  const SizedBox(height: 24),
+                  _CategoriesSection(onRefresh: _refreshAll,),
+                  const SizedBox(height: 20),
+                  _HostBanner(onRefresh: _refreshAll,),
+                  const SizedBox(height: 24),
+                  _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll,),
+                  const SizedBox(height: 24),
+                  _RecommendedSection(recommendations: _recommendations, onRefresh: _refreshAll,),
+                  const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

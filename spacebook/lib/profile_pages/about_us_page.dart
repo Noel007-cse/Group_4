@@ -92,6 +92,17 @@ class AboutUsPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
+            _buildSectionTitle("RATE US", context),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: _RatingWidget()
+            ),
+
+            const SizedBox(height: 40),
+
+
             /// Version Info
             const Text(
               "Version 2.4.0",
@@ -219,6 +230,53 @@ class _ContactRow extends StatelessWidget {
             ],
           ),
         )
+      ],
+    );
+  }
+}
+
+
+class _RatingWidget extends StatefulWidget {
+  const _RatingWidget({super.key});
+
+  @override
+  State<_RatingWidget> createState() => _RatingWidgetState();
+}
+
+class _RatingWidgetState extends State<_RatingWidget> {
+  int rating = 0;
+
+  void updateRating(int index) {
+    setState(() {
+      rating = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(5, (index) {
+            return IconButton(
+              onPressed: () => updateRating(index + 1),
+              icon: Icon(
+                index < rating ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: 30,
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 5),
+
+        Text(
+          rating == 0 ? "No rating given" : "$rating / 5",
+          style: const TextStyle(color: Colors.grey),
+        ),
       ],
     );
   }
