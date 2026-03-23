@@ -187,7 +187,10 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
   onTap: () => Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (_) => MapPage(locationName: space.area),
+     builder: (_) => MapPage(
+  locationName: space.area,
+  allSpaces: [], // ✅ NOW INSIDE
+),
     ),
   ),
   child: Container(

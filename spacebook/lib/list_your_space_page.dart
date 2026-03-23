@@ -289,6 +289,7 @@ class _ListYourSpacePageState extends State<ListYourSpacePage> {
       MaterialPageRoute(
         builder: (_) => MapPage(
           locationName: _locationController.text.trim(),
+          allSpaces: [],
         ),
       ),
     );
