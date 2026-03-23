@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'package:spacebook/providers/space_provider.dart';
 
 class MySpacesPage extends StatefulWidget {
   const MySpacesPage({super.key});
@@ -267,7 +269,12 @@ class _SpaceCard extends StatelessWidget {
 
                       if (confirm == true) {
                         await ApiService.deleteSpace(space['id']);
-                        onRefresh();
+                       Provider.of<SpaceProvider>(context, listen: false)
+    .removeSpace(space['id']);
+
+// refresh page
+onRefresh();
+                       
                       }
                     },
                     icon: const Icon(Icons.delete_outline, size: 20, color: Colors.white,),

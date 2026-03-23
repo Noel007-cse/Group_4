@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'providers/space_provider.dart';
 import 'package:spacebook/splash.dart';
 
 void main() async {
@@ -8,7 +10,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const SpaceBookApp());
+ runApp(
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => SpaceProvider()),
+    ],
+    child: const SpaceBookApp(),
+  ),
+);
 }
 
 class SpaceBookApp extends StatefulWidget {

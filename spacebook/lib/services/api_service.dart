@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:spacebook/models/space_frame_model.dart';
 
+
 class ApiService {
+  static bool shouldRefreshHome = false;
   static const String baseUrl = 'http://127.0.0.1:5000/api';
   static String? _token;
   static Map<String, dynamic>? currentUser;

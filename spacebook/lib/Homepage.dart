@@ -3,6 +3,8 @@ import 'package:spacebook/services/api_service.dart';
 import 'package:spacebook/list_your_space_page.dart';
 import 'package:spacebook/main.dart';
 import 'package:spacebook/models/category_item_model.dart';
+import 'package:provider/provider.dart';
+import 'package:spacebook/providers/space_provider.dart';
 import 'package:spacebook/models/space_frame_model.dart';
 import 'package:spacebook/search_page.dart';
 import 'package:spacebook/widgets/favorites_card_widget.dart';
@@ -61,32 +63,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _loadRecommended() async {
-    try {
-      final data = await ApiService.getRecommend();
-      setState(() {
-        _recommendations = data.map((d) => SpaceFrameModel(
-          id: d['id'] ?? 0,
-          title: d['title'] ?? '',
-          category: d['category'] ?? '',
-          area: d['area'] ?? '',
-          distance: d['distance'] ?? '0.0',
-          distanceKm: d['distance_km'] ?? 0.0,
-          rating: d['rating'] ?? 0.0,
-          noOfRating: d['no_of_rating'] ?? 0.0,
-          description: d['description'] ?? '',
-          pricePerHr: d['price_per_hr'] ?? 0,
-          isFavorite: d['is_favorite'] ?? false,
-          hasSeats: d['has_seats'] ?? false,
-          imageUrl: d['image_url'] ?? '',
-        )).toList();
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
+Future<void> _loadRecommended() async {
+  try {
+    final data = await ApiService.getRecommend();
 
+    final mapped = data.map((d) => SpaceFrameModel(
+      id: d['id'] ?? 0,
+      title: d['title'] ?? '',
+      category: d['category'] ?? '',
+      area: d['area'] ?? '',
+      distance: d['distance'] ?? '0.0',
+      distanceKm: d['distance_km'] ?? 0.0,
+      rating: d['rating'] ?? 0.0,
+      noOfRating: d['no_of_rating'] ?? 0.0,
+      description: d['description'] ?? '',
+      pricePerHr: d['price_per_hr'] ?? 0,
+      isFavorite: d['is_favorite'] ?? false,
+      hasSeats: d['has_seats'] ?? false,
+      imageUrl: d['image_url'] ?? '',
+    )).toList();
+
+    // ✅ store globally
+    Provider.of<SpaceProvider>(context, listen: false).setSpaces(mapped);
+
+    setState(() {
+      _loading = false;
+    });
+
+  } catch (e) {
+    print(e);
+    setState(() => _loading = false);
+  }
+}
   Future<void> _refreshAll() async {
     await Future.wait([
       _loadFavorites(),
@@ -120,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 24),
                   _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll,),
                   const SizedBox(height: 24),
-                  _RecommendedSection(recommendations: _recommendations, onRefresh: _refreshAll,),
+                 _RecommendedSection(onRefresh: _refreshAll),
                   const SizedBox(height: 16),
               ],
             ),
@@ -500,13 +508,14 @@ class _FavoritesSection extends StatelessWidget {
 // ─── Recommended Section ───────────────────────────────────────────────────────
 
 class _RecommendedSection extends StatelessWidget {
-  final List<dynamic> recommendations;
   final VoidCallback? onRefresh;
 
-  const _RecommendedSection({required this.recommendations, this.onRefresh});
+  const _RecommendedSection({this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
+    final spaces = Provider.of<SpaceProvider>(context).spaces;
+
     return Column(
       children: [
         Row(
@@ -515,43 +524,22 @@ class _RecommendedSection extends StatelessWidget {
             Text(
               'Recommended for You',
               style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
             ),
-            GestureDetector(
-  onTap: () async {
-    // Load all spaces then show map
-    try {
-      final spaces = await ApiService.getSpaces();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MapPage(
-            locationName: 'All Spaces',
-            allSpaces: List<Map<String, dynamic>>.from(spaces),
-          ),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not load spaces')));
-    }
-  },
-  child: Text(
-    'View map',
-    style: TextStyle(
-      fontSize: 13,
-      color: _green,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-),
           ],
         ),
         const SizedBox(height: 14),
-        ...recommendations.map((space) => SpacesCardWidget(space: space, onRefresh: onRefresh,)),
+
+        if (spaces.isEmpty)
+          const Center(child: Text("No spaces available"))
+        else
+          ...spaces.map((space) => SpacesCardWidget(
+                space: space,
+                onRefresh: onRefresh,
+              )),
       ],
     );
   }
