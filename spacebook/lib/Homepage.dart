@@ -14,6 +14,7 @@ import 'package:spacebook/widgets/search_result_widget.dart';
 import 'package:spacebook/widgets/space_frame_widget.dart';
 import 'data/category_item_data.dart';
 import 'package:spacebook/map_page.dart';
+
 const Color _green = Color(0xFF3F6B00);
 
 class HomePage extends StatefulWidget {
@@ -26,7 +27,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _loading = true;
   List<dynamic> _favorites = [];
-  List<dynamic> _recommendations = [];
 
   @override
   void initState() {
@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadFavorites() async {
     try {
       final data = await ApiService.getFavorites();
-
       setState(() {
         _favorites = data.map((d) => SpaceFrameModel(
           id: d['id'] ?? 0,
@@ -54,7 +53,6 @@ class _HomePageState extends State<HomePage> {
           isFavorite: true,
           imageUrl: d['image_url'] ?? '',
         )).toList();
-
         _loading = false;
       });
     } catch (e) {
@@ -63,38 +61,33 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-Future<void> _loadRecommended() async {
-  try {
-    final data = await ApiService.getRecommend();
+  Future<void> _loadRecommended() async {
+    try {
+      final data = await ApiService.getRecommend();
+      final mapped = data.map((d) => SpaceFrameModel(
+        id: d['id'] ?? 0,
+        title: d['title'] ?? '',
+        category: d['category'] ?? '',
+        area: d['area'] ?? '',
+        distance: d['distance'] ?? '0.0',
+        distanceKm: d['distance_km'] ?? 0.0,
+        rating: d['rating'] ?? 0.0,
+        noOfRating: d['no_of_rating'] ?? 0.0,
+        description: d['description'] ?? '',
+        pricePerHr: d['price_per_hr'] ?? 0,
+        isFavorite: d['is_favorite'] ?? false,
+        hasSeats: d['has_seats'] ?? false,
+        imageUrl: d['image_url'] ?? '',
+      )).toList();
 
-    final mapped = data.map((d) => SpaceFrameModel(
-      id: d['id'] ?? 0,
-      title: d['title'] ?? '',
-      category: d['category'] ?? '',
-      area: d['area'] ?? '',
-      distance: d['distance'] ?? '0.0',
-      distanceKm: d['distance_km'] ?? 0.0,
-      rating: d['rating'] ?? 0.0,
-      noOfRating: d['no_of_rating'] ?? 0.0,
-      description: d['description'] ?? '',
-      pricePerHr: d['price_per_hr'] ?? 0,
-      isFavorite: d['is_favorite'] ?? false,
-      hasSeats: d['has_seats'] ?? false,
-      imageUrl: d['image_url'] ?? '',
-    )).toList();
-
-    // ✅ store globally
-    Provider.of<SpaceProvider>(context, listen: false).setSpaces(mapped);
-
-    setState(() {
-      _loading = false;
-    });
-
-  } catch (e) {
-    print(e);
-    setState(() => _loading = false);
+      Provider.of<SpaceProvider>(context, listen: false).setSpaces(mapped);
+      setState(() => _loading = false);
+    } catch (e) {
+      print(e);
+      setState(() => _loading = false);
+    }
   }
-}
+
   Future<void> _refreshAll() async {
     await Future.wait([
       _loadFavorites(),
@@ -119,17 +112,17 @@ Future<void> _loadRecommended() async {
                   const Center(child: CircularProgressIndicator())
                 else
                   _Header(),
-                  const SizedBox(height: 16),
-                  _SearchBar(onRefresh: _refreshAll,),
-                  const SizedBox(height: 24),
-                  _CategoriesSection(onRefresh: _refreshAll,),
-                  const SizedBox(height: 20),
-                  _HostBanner(onRefresh: _refreshAll,),
-                  const SizedBox(height: 24),
-                  _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll,),
-                  const SizedBox(height: 24),
-                 _RecommendedSection(onRefresh: _refreshAll),
-                  const SizedBox(height: 16),
+                const SizedBox(height: 16),
+                _SearchBar(onRefresh: _refreshAll),
+                const SizedBox(height: 24),
+                _CategoriesSection(onRefresh: _refreshAll),
+                const SizedBox(height: 20),
+                _HostBanner(onRefresh: _refreshAll),
+                const SizedBox(height: 24),
+                _FavoritesSection(favorites: _favorites, onRefresh: _refreshAll),
+                const SizedBox(height: 24),
+                _RecommendedSection(onRefresh: _refreshAll),
+                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -191,9 +184,7 @@ class _Header extends StatelessWidget {
                   : Icons.dark_mode_outlined,
               size: 20,
             ),
-            onPressed: () {
-              SpaceBookApp.of(context)?.toggleTheme();
-            },
+            onPressed: () => SpaceBookApp.of(context)?.toggleTheme(),
           ),
         ),
       ],
@@ -229,25 +220,17 @@ class _SearchBar extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           children: [
-            const SizedBox(width: 14),
-            const Icon(Icons.search, color: Colors.grey, size: 20),
-            const SizedBox(width: 8),
-            const Expanded(
+            SizedBox(width: 14),
+            Icon(Icons.search, color: Colors.grey, size: 20),
+            SizedBox(width: 8),
+            Expanded(
               child: Text(
                 'Search sports, study, or events...',
                 style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ),
-            // Container(
-            //   margin: const EdgeInsets.only(right: 8),
-            //   padding: const EdgeInsets.all(6),
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(8),
-            //   ),
-            //   child: const Icon(Icons.tune, color: Colors.grey, size: 18),
-            // ),
           ],
         ),
       ),
@@ -271,16 +254,11 @@ class _CategoriesSection extends StatelessWidget {
             Text(
               'Categories',
               style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
             ),
-            // Text(
-            //   'See All',
-            //   style: TextStyle(
-            //       fontSize: 13, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
-            // ),
           ],
         ),
         const SizedBox(height: 14),
@@ -328,8 +306,7 @@ class _CategoryItem extends StatelessWidget {
                 color: category.bgColor,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child:
-                  Icon(category.icon, color: category.iconColor, size: 28),
+              child: Icon(category.icon, color: category.iconColor, size: 28),
             ),
             const SizedBox(height: 7),
             Text(
@@ -337,7 +314,7 @@ class _CategoryItem extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 11.5,
-                color: Theme.of(context).textTheme.bodyLarge?.color
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ],
@@ -400,14 +377,16 @@ class _HostBanner extends StatelessWidget {
                   if (!ApiService.isOwner) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Create an Owner account to list your space.'),
+                        content: Text(
+                            'Create an Owner account to list your space.'),
                       ),
                     );
                     return;
                   }
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ListYourSpacePage()),
+                    MaterialPageRoute(
+                        builder: (context) => ListYourSpacePage()),
                   ).then((_) => onRefresh?.call());
                 },
                 style: ElevatedButton.styleFrom(
@@ -422,7 +401,8 @@ class _HostBanner extends StatelessWidget {
                 ),
                 child: const Text(
                   'List Your Space',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
             ],
@@ -449,17 +429,17 @@ class _FavoritesSection extends StatelessWidget {
         Text(
           'Favorites',
           style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
         ),
         const SizedBox(height: 12),
-        
-        if(favorites.isEmpty)
+        if (favorites.isEmpty)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            padding:
+                const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(12),
@@ -496,7 +476,8 @@ class _FavoritesSection extends StatelessWidget {
               itemCount: favorites.length,
               itemBuilder: (context, index) {
                 final space = favorites[index];
-                return FavoritesCardWidget(space: space, onRefresh: onRefresh,);
+                return FavoritesCardWidget(
+                    space: space, onRefresh: onRefresh);
               },
             ),
           ),
@@ -529,10 +510,56 @@ class _RecommendedSection extends StatelessWidget {
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
+            // ── View Map Button ──────────────────────────────────────
+            GestureDetector(
+              onTap: () async {
+                try {
+                  final allSpaces = await ApiService.getSpaces();
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MapPage(
+                          locationName: 'All Spaces',
+                          allSpaces: List<Map<String, dynamic>>.from(
+                            allSpaces.map((s) => {
+                              'title': s['title'] ?? '',
+                              'area': s['area'] ?? '',
+                              'price_per_hr': s['price_per_hr'] ?? 0,
+                            }),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Could not load spaces for map')),
+                    );
+                  }
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.map_outlined, size: 14, color: _green),
+                  const SizedBox(width: 4),
+                  Text(
+                    'View map',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: _green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 14),
-
         if (spaces.isEmpty)
           const Center(child: Text("No spaces available"))
         else
