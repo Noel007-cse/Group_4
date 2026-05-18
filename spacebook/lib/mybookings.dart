@@ -107,17 +107,27 @@ class _BookingsListState extends State<_BookingsList> {
       final data = await ApiService.getMyBookings();
       final filtered = data.where((b) => widget.isUpcoming
           ? b['status'] == 'FUNCTIONAL'
-          : b['status'] == 'COMPLETED').toList();
+          : (b['status'] == 'COMPLETED' || b['status'] == 'CANCELLED')).toList();
 
       setState(() {
-        _bookings = filtered.map((b) => BookingModel(
-          id: b['id'].toString(),
-          title: b['title'] ?? '',
-          date: b['booking_date'] ?? '',
-          price: '₹${b['total_price'] ?? 0}',
-          imageUrl: b['image_url'] ?? '',
-          status: (b['is_confirmed'] ?? false) ? 'CONFIRMED' : 'UNCONFIRMED',
-        )).toList();
+        _bookings = filtered.map((b) {
+          String displayStatus;
+          if (b['status'] == 'CANCELLED') {
+            displayStatus = 'CANCELLED';
+          } else if (b['is_confirmed'] ?? false) {
+            displayStatus = 'CONFIRMED';
+          } else {
+            displayStatus = 'PENDING';
+          }
+          return BookingModel(
+            id: b['id'].toString(),
+            title: b['title'] ?? '',
+            date: b['booking_date'] ?? '',
+            price: '₹${b['total_price'] ?? 0}',
+            imageUrl: b['image_url'] ?? '',
+            status: displayStatus,
+          );
+        }).toList();
         _loading = false;
       });
     } catch (e) {
@@ -200,7 +210,11 @@ class _BookingCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: booking.status == 'CONFIRMED' ? Theme.of(context).colorScheme.primary : Colors.orange,
+                    color: booking.status == 'CONFIRMED'
+                        ? Theme.of(context).colorScheme.primary
+                        : booking.status == 'CANCELLED'
+                            ? Colors.grey
+                            : Colors.orange,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
