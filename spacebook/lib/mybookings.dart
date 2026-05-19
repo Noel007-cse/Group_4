@@ -126,6 +126,7 @@ class _BookingsListState extends State<_BookingsList> {
             price: '₹${b['total_price'] ?? 0}',
             imageUrl: b['image_url'] ?? '',
             status: displayStatus,
+            seat: b['seat']?.toString(),
           );
         }).toList();
         _loading = false;

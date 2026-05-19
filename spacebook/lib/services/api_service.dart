@@ -274,6 +274,7 @@ class ApiService {
     required String bookingDate,
     required String timeSlot,
     required int totalPrice,
+    String? seat,
     bool sendNotification = false,
     String? notifyEmail,
   }) async {
@@ -282,6 +283,7 @@ class ApiService {
       'booking_date': bookingDate,
       'time_slot': timeSlot,
       'total_price': totalPrice,
+      if (seat != null) 'seat': seat,
     };
 
     if (sendNotification && notifyEmail != null && notifyEmail.isNotEmpty) {

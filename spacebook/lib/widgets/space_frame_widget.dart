@@ -66,11 +66,13 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
 
     setState(() => _isBooking = true);
     try {
+      final selectedSeatName = widget.space.hasSeats ? seats[selectedSeat].name : null;
       final result = await ApiService.createBooking(
         spaceId: widget.space.id,
         bookingDate: DateTime.now().toIso8601String().split('T')[0],
         timeSlot: selectedTime,
         totalPrice: widget.space.pricePerHr,
+        seat: selectedSeatName,
         sendNotification: _notifyMe,
         notifyEmail: _notifyMe ? _emailController.text.trim() : null,
       );

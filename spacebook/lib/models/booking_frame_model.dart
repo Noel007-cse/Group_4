@@ -5,6 +5,7 @@ class BookingModel {
   final String price;
   final String imageUrl;
   final String status; // 'COMPLETED' or 'CONFIRMED'
+  final String? seat;
 
   const BookingModel({
     required this.id,
@@ -13,5 +14,6 @@ class BookingModel {
     required this.price,
     required this.imageUrl,
     required this.status,
+    this.seat,
   });
 }

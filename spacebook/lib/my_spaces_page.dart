@@ -466,6 +466,19 @@ class _BookingReceivedCardState extends State<_BookingReceivedCard> {
               ),
             ],
           ),
+          if (widget.booking['seat'] != null && widget.booking['seat'].toString().isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.event_seat_outlined, size: 14, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text(
+                  'Seat: ${widget.booking['seat']}',
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 8),
           Text(
             '₹${widget.booking['total_price'] ?? 0}',
