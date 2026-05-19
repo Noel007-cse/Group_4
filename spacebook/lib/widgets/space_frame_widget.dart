@@ -31,6 +31,8 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
   int selectedSeat = 0;
   bool _isFav = false;
   bool _isBooking = false;
+  bool _notifyMe = false;
+  late TextEditingController _emailController;
 
   final List<String> dates = [
     "THU\n24", "FRI\n25", "SAT\n26", "SUN\n27", "MON\n28"
@@ -69,6 +71,8 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
         bookingDate: DateTime.now().toIso8601String().split('T')[0],
         timeSlot: selectedTime,
         totalPrice: widget.space.pricePerHr,
+        sendNotification: _notifyMe,
+        notifyEmail: _notifyMe ? _emailController.text.trim() : null,
       );
 
       if (result['id'] != null) {
@@ -100,6 +104,16 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
     super.initState();
     _addRecommendation();
     _isFav = widget.space.isFavorite;
+    // Pre-fill with user's email if available
+    _emailController = TextEditingController(
+      text: ApiService.currentUser?['email'] ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 
   Future<void> _addRecommendation() async {
@@ -580,6 +594,8 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
                   ],
 
                   const SizedBox(height: 20),
+                  _notificationSection(),
+                  const SizedBox(height: 20),
                   _facilitiesSection(),
                 ],
               ),
@@ -588,6 +604,112 @@ class _SpaceFrameWidgetState extends State<SpaceFrameWidget> {
         ),
       ),
       bottomNavigationBar: _bottomBar(),
+    );
+  }
+
+  Widget _notificationSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _notifyMe
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.4)
+              : Colors.grey.withOpacity(0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.notifications_active_outlined,
+                color: _notifyMe
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey,
+                size: 22,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  "Email Notification",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+              ),
+              Transform.scale(
+                scale: 0.9,
+                child: Switch(
+                  value: _notifyMe,
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  onChanged: (val) => setState(() => _notifyMe = val),
+                ),
+              ),
+            ],
+          ),
+          if (_notifyMe) ...[
+            const SizedBox(height: 4),
+            Text(
+              "We'll send a booking confirmation & reminder to your email.",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Enter your email',
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
+                prefixIcon: Icon(
+                  Icons.email_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
+                filled: true,
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(0.3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(0.3)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1.5),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 

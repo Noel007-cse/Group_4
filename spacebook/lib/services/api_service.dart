@@ -274,16 +274,25 @@ class ApiService {
     required String bookingDate,
     required String timeSlot,
     required int totalPrice,
+    bool sendNotification = false,
+    String? notifyEmail,
   }) async {
+    final body = {
+      'space_id': spaceId,
+      'booking_date': bookingDate,
+      'time_slot': timeSlot,
+      'total_price': totalPrice,
+    };
+
+    if (sendNotification && notifyEmail != null && notifyEmail.isNotEmpty) {
+      body['send_notification'] = true;
+      body['notify_email'] = notifyEmail;
+    }
+
     final res = await http.post(
       Uri.parse('$baseUrl/bookings'),
       headers: _authHeaders,
-      body: jsonEncode({
-        'space_id': spaceId,
-        'booking_date': bookingDate,
-        'time_slot': timeSlot,
-        'total_price': totalPrice,
-      }),
+      body: jsonEncode(body),
     );
     return jsonDecode(res.body);
   }
