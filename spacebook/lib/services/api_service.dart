@@ -255,6 +255,19 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
+  static Future<Map<String, dynamic>> rateSpace(int spaceId, int rating) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/spaces/$spaceId/rate'),
+      headers: _authHeaders,
+      body: jsonEncode({'rating': rating}),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
+    }
+    throw Exception('Failed to submit rating');
+  }
+
+
   // ── Bookings ──
   static Future<Map<String, dynamic>> createBooking({
     required int spaceId,
